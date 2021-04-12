@@ -1,8 +1,8 @@
 CC=gcc
 DUMP=objdump
 
-dump: test
-	$(DUMP) -d test -M intel  > dump.txt
+dump_O3: test_O3
+	$(DUMP) -d test_O3 -M intel  > dump_O3.txt
 
-test: code.c
-	$(CC) -o test code.c
+test_O3: code.c
+	$(CC) -o test_O3 code.c -O3
