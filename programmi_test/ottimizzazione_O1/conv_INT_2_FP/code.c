@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-// prova
+
 float foo (int a){
     float x = a;
     return x;

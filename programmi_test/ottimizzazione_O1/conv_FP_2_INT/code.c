@@ -8,7 +8,7 @@ int foo (float a){
 }
 
 void main (){
-    float a = 10.000;
+    float a = 10.514;
     int res = foo(a);
     printf("%d \n", res);
     return;    
