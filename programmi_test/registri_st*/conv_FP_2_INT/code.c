@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <z3.h>
 
 int foo (long double a){
     int x = a;
