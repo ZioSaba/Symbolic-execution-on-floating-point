@@ -1,0 +1,3 @@
+Ah, prova a vedere se usando il tipo long double, il compilatore di inizia ad usare la fpu x87 (registri st(i) e relative istruzioni) -> https://gcc.gnu.org/wiki/x87note
+Leggi anche questo -> https://stackoverflow.com/questions/44093558/can-the-x86-do-fpu-operations-independently-or-in-parallel
+Penso che si può forzare gcc a generare codice per x87 attraverso qualche flag ma tocca fare qualche prova -> https://gcc.gnu.org/onlinedocs/gcc-4.7.0/gcc/i386-and-x86_002d64-Options.html#index-mpc64-1406
