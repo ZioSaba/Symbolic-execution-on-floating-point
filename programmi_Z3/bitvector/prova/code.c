@@ -781,24 +781,38 @@ void eval_example1()
 {
     Z3_context ctx = mk_context();
     Z3_solver  s = mk_solver(ctx);
-    Z3_ast x, y, two;
+    //Z3_ast x, y, two;
     Z3_ast c1, c2;
     Z3_model m = 0;
 
     printf("\neval_example1\n");
     LOG_MSG("eval_example1");
 
-    x          = mk_int_var(ctx, "x");
-    y          = mk_int_var(ctx, "y");
-    two        = mk_int(ctx, 2);
+
+    /****************************/
+    Z3_sort bv_sort = Z3_mk_bv_sort(ctx, 32);
+    Z3_ast x = mk_var(ctx, "x", bv_sort);
+    Z3_ast y = mk_var(ctx, "y", bv_sort);
+    Z3_ast two = Z3_mk_numeral(ctx, "2", bv_sort);
+    c1          = Z3_mk_bvslt(ctx, x, y);
+    c2          = Z3_mk_bvsgt(ctx, x, two);
+    /****************************/
+
+    
+    //x          = mk_int_var(ctx, "x");
+    //y          = mk_int_var(ctx, "y");
+    //two        = mk_int(ctx, 2);
+
 
     /* assert x < y */
-    c1         = Z3_mk_lt(ctx, x, y);
+    //c1         = Z3_mk_lt(ctx, x, y);
     Z3_solver_assert(ctx, s, c1);
 
     /* assert x > 2 */
-    c2         = Z3_mk_gt(ctx, x, two);
+    //c2         = Z3_mk_gt(ctx, x, two);
     Z3_solver_assert(ctx, s, c2);
+
+    
 
     /* find model for the constraints above */
     if (Z3_solver_check(ctx, s) == Z3_L_TRUE) {
@@ -808,7 +822,7 @@ void eval_example1()
         m = Z3_solver_get_model(ctx, s);
         if (m) Z3_model_inc_ref(ctx, m);
         printf("MODEL:\n%s", Z3_model_to_string(ctx, m));
-        x_plus_y = Z3_mk_add(ctx, 2, args);
+        x_plus_y = Z3_mk_bvadd(ctx, x, y);
         printf("\nevaluating x+y\n");
         if (Z3_model_eval(ctx, m, x_plus_y, 1, &v)) {
             printf("result = ");

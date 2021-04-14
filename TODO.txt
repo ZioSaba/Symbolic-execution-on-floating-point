@@ -6,7 +6,7 @@ Secondo me puoi iniziare a giocare con Z3. Prova ad creare un programma che incl
 Fatto ciò, dovresti avere un idea di quello che attualmente fa un esecutore concolico:
 - definisce dei bitvector non costanti da 8 bit per ogni byte dell'input. Ogni bitvector è per noi un simbolo.
 - quando il programma esegue istruzioni, se almeno uno degli operandi è associato ad un bitvector non costante, allora riproduce l'operazione usando le api di Z3 sui rispettivi operandi, es. una  sub viene gestita usando Z3_mk_bvsub
-- quando si arriva su un branch condizionale, si costruisce la formula legata alla condizione e si chiede al solver Z3 un assegnamento per di direzione true (condizione originale) o per la direzione false (!condizione)
+- quando si arriva su un branch condizionale, si costruisce la formula legata alla condizione e si chiede al solver Z3 un assegnamento per la direzione true (condizione originale) o per la direzione false (!condizione)
 - se il solver trova un assegnamento, allora si dumpa su file la soluzione per i singoli bitvector associati all'input del programma.
 
 Se questi passaggi ti sono abbastanza chiari, il prossimo step è riprendere uno dei precedenti esempi Z3 e modificarli in modo da usare un tipo Z3 legato ai floating point invece che i bitvector. 
