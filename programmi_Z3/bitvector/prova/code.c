@@ -822,7 +822,10 @@ void eval_example1()
         m = Z3_solver_get_model(ctx, s);
         if (m) Z3_model_inc_ref(ctx, m);
         printf("MODEL:\n%s", Z3_model_to_string(ctx, m));
+        
+        //x_plus_y = Z3_mk_add(ctx, 2, args);
         x_plus_y = Z3_mk_bvadd(ctx, x, y);
+        
         printf("\nevaluating x+y\n");
         if (Z3_model_eval(ctx, m, x_plus_y, 1, &v)) {
             printf("result = ");
