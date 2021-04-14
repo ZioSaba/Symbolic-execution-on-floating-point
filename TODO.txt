@@ -1,3 +1,17 @@
-Ah, prova a vedere se usando il tipo long double, il compilatore di inizia ad usare la fpu x87 (registri st(i) e relative istruzioni) -> https://gcc.gnu.org/wiki/x87note
-Leggi anche questo -> https://stackoverflow.com/questions/44093558/can-the-x86-do-fpu-operations-independently-or-in-parallel
-Penso che si può forzare gcc a generare codice per x87 attraverso qualche flag ma tocca fare qualche prova -> https://gcc.gnu.org/onlinedocs/gcc-4.7.0/gcc/i386-and-x86_002d64-Options.html#index-mpc64-1406
+Secondo me puoi iniziare a giocare con Z3. Prova ad creare un programma che include header z3 e linka z3 e:
+- esegue questo (che usa bitvector, ossia il tipo Z3 usato normalmente per rappresentare i dati interi)
+- esegue questo (che non usa i bitvector ma il tipo "int" ma che mostra come chiamare Z3 eval per avere un assegnamento)
+- combina i due precenti esempi: modifica il secondo esempio per usare i bitvector
+
+Fatto ciò, dovresti avere un idea di quello che attualmente fa un esecutore concolico:
+- definisce dei bitvector non costanti da 8 bit per ogni byte dell'input. Ogni bitvector è per noi un simbolo.
+- quando il programma esegue istruzioni, se almeno uno degli operandi è associato ad un bitvector non costante, allora riproduce l'operazione usando le api di Z3 sui rispettivi operandi, es. una  sub viene gestita usando Z3_mk_bvsub
+- quando si arriva su un branch condizionale, si costruisce la formula legata alla condizione e si chiede al solver Z3 un assegnamento per di direzione true (condizione originale) o per la direzione false (!condizione)
+- se il solver trova un assegnamento, allora si dumpa su file la soluzione per i singoli bitvector associati all'input del programma.
+
+Se questi passaggi ti sono abbastanza chiari, il prossimo step è riprendere uno dei precedenti esempi Z3 e modificarli in modo da usare un tipo Z3 legato ai floating point invece che i bitvector. 
+Fai diverse prove, provando a "riprodurre" diverse operazioni (add, sub, mul, etc., confronti di vario tipo). 
+
+Fai un po' di prove e fammi sapere.
+
+OT: ho scoperto che SymCC (che ha pezzi in comunque con SymQEMU) ha un supporto preliminare ai floating point. Come per KLEE, le scelte che hanno fatto loro ci possono guidare nello nostre scelte. 
