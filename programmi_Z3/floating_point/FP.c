@@ -697,93 +697,97 @@ void check2(Z3_context ctx, Z3_solver s, Z3_lbool expected_result)
 }
 
 
+void fpa_example() {
+    Z3_config cfg;
+    Z3_context ctx;
+    Z3_solver s;
+    Z3_sort double_sort, rm_sort;
+    Z3_symbol s_rm, s_x, s_y, s_x_plus_y;
+    Z3_ast rm, x, y, n, x_plus_y, c1, c2, c3, c4, c5;
+    Z3_ast args[2], args2[2], and_args[3], args3[3];
 
-/**
-   \brief Demonstrate how to use #Z3_eval.
-*/
-void eval()
-{
-    Z3_context ctx = mk_context();
-    Z3_solver  s = mk_solver(ctx);
-    //Z3_ast x, y, two;
-    //Z3_ast c1, c2;
-    Z3_model m = 0;
+    printf("\nFPA-example\n");
 
-    printf("\neval_example1\n");
+    cfg = Z3_mk_config();
+    ctx = Z3_mk_context(cfg);
+    s   = mk_solver(ctx);
+    Z3_del_config(cfg);
 
+    double_sort = Z3_mk_fpa_sort(ctx, 11, 53);
+    rm_sort = Z3_mk_fpa_rounding_mode_sort(ctx);
 
-    /****************************/
-    Z3_sort FP_sort = Z3_mk_fpa_sort(ctx, 11, 53);
+    // Show that there are x, y s.t. (x + y) = 42.0 (with rounding mode).
+    s_rm = Z3_mk_string_symbol(ctx, "rm");
+    rm = Z3_mk_const(ctx, s_rm, rm_sort);
+    s_x = Z3_mk_string_symbol(ctx, "x");
+    s_y = Z3_mk_string_symbol(ctx, "y");
+    x = Z3_mk_const(ctx, s_x, double_sort);
+    y = Z3_mk_const(ctx, s_y, double_sort);
+    n = Z3_mk_fpa_numeral_double(ctx, 42.0, double_sort);
 
-    Z3_sort rounding_mode = Z3_mk_fpa_rounding_mode_sort(ctx);
-    Z3_symbol rm_sym = Z3_mk_string_symbol(ctx, "rm");
-    Z3_ast rm = Z3_mk_const(ctx, rm_sym, FP_sort);
+    s_x_plus_y = Z3_mk_string_symbol(ctx, "x_plus_y");
+    x_plus_y = Z3_mk_const(ctx, s_x_plus_y, double_sort);
+    c1 = Z3_mk_eq(ctx, x_plus_y, Z3_mk_fpa_add(ctx, rm, x, y));
 
-    Z3_symbol x_sym = Z3_mk_string_symbol(ctx, "x");
-    Z3_ast x = Z3_mk_const(ctx, x_sym, FP_sort);
+    args[0] = c1;
+    args[1] = Z3_mk_eq(ctx, x_plus_y, n);
+    c2 = Z3_mk_and(ctx, 2, (Z3_ast*)&args);
 
-    Z3_symbol y_sym = Z3_mk_string_symbol(ctx, "y");
-    Z3_ast y = Z3_mk_const(ctx, y_sym, FP_sort);
+    args2[0] = c2;
+    args2[1] = Z3_mk_not(ctx, Z3_mk_eq(ctx, rm, Z3_mk_fpa_rtz(ctx)));
+    c3 = Z3_mk_and(ctx, 2, (Z3_ast*)&args2);
 
-    Z3_ast two = Z3_mk_fpa_numeral_float(ctx, 2.0, FP_sort);
+    and_args[0] = Z3_mk_not(ctx, Z3_mk_fpa_is_zero(ctx, y));
+    and_args[1] = Z3_mk_not(ctx, Z3_mk_fpa_is_nan(ctx, y));
+    and_args[2] = Z3_mk_not(ctx, Z3_mk_fpa_is_infinite(ctx, y));
+    args3[0] = c3;
+    args3[1] = Z3_mk_and(ctx, 3, and_args);
+    c4 = Z3_mk_and(ctx, 2, (Z3_ast*)&args3);
 
-    Z3_ast c1 = Z3_mk_fpa_lt(ctx, x, y);
-    Z3_ast c2 = Z3_mk_fpa_gt(ctx, x, two);
-    /****************************/
+    printf("c4: %s\n", Z3_ast_to_string(ctx, c4));
+    Z3_solver_push(ctx, s);
+    Z3_solver_assert(ctx, s, c4);
+    check(ctx, s, Z3_L_TRUE);
+    Z3_solver_pop(ctx, s, 1);
 
-    
-    //x          = mk_int_var(ctx, "x");
-    //y          = mk_int_var(ctx, "y");
-    //two        = mk_int(ctx, 2);
+    // Show that the following are equal:
+    //   (fp #b0 #b10000000001 #xc000000000000)
+    //   ((_ to_fp 11 53) #x401c000000000000))
+    //   ((_ to_fp 11 53) RTZ 1.75 2)))
+    //   ((_ to_fp 11 53) RTZ 7.0)))
 
+    Z3_solver_push(ctx, s);
+    c1 = Z3_mk_fpa_fp(ctx,
+                      Z3_mk_numeral(ctx, "0", Z3_mk_bv_sort(ctx, 1)),
+                      Z3_mk_numeral(ctx, "1025", Z3_mk_bv_sort(ctx, 11)),
+                      Z3_mk_numeral(ctx, "3377699720527872", Z3_mk_bv_sort(ctx, 52)));
+    c2 = Z3_mk_fpa_to_fp_bv(ctx,
+                            Z3_mk_numeral(ctx, "4619567317775286272", Z3_mk_bv_sort(ctx, 64)),
+                            Z3_mk_fpa_sort(ctx, 11, 53));
+    c3 = Z3_mk_fpa_to_fp_int_real(ctx,
+                                  Z3_mk_fpa_rtz(ctx),
+                                  Z3_mk_numeral(ctx, "2", Z3_mk_int_sort(ctx)), /* exponent */
+                                  Z3_mk_numeral(ctx, "1.75", Z3_mk_real_sort(ctx)), /* significand */
+                                  Z3_mk_fpa_sort(ctx, 11, 53));
+    c4 = Z3_mk_fpa_to_fp_real(ctx,
+                              Z3_mk_fpa_rtz(ctx),
+                              Z3_mk_numeral(ctx, "7.0", Z3_mk_real_sort(ctx)),
+                              Z3_mk_fpa_sort(ctx, 11, 53));
+    args3[0] = Z3_mk_eq(ctx, c1, c2);
+    args3[1] = Z3_mk_eq(ctx, c1, c3);
+    args3[2] = Z3_mk_eq(ctx, c1, c4);
+    c5 = Z3_mk_and(ctx, 3, args3);
 
-    /* assert x < y */
-    //c1         = Z3_mk_lt(ctx, x, y);
-    Z3_solver_assert(ctx, s, c1);
+    printf("c5: %s\n", Z3_ast_to_string(ctx, c5));
+    Z3_solver_assert(ctx, s, c5);
+    check(ctx, s, Z3_L_TRUE);
+    Z3_solver_pop(ctx, s, 1);
 
-    /* assert x > 2 */
-    //c2         = Z3_mk_gt(ctx, x, two);
-    Z3_solver_assert(ctx, s, c2);
-
-    
-
-    /* find model for the constraints above */
-    if (Z3_solver_check(ctx, s) == Z3_L_TRUE) {
-        
-        Z3_symbol somma_sym = Z3_mk_string_symbol(ctx, "x_plus_y");
-        Z3_ast x_plus_y = Z3_mk_const(ctx, somma_sym, FP_sort);
-        Z3_ast eq = Z3_mk_eq(ctx, x_plus_y, Z3_mk_fpa_add(ctx, rm, x, y));
-        
-        //Z3_ast   args[2] = {x, y};
-        Z3_ast v;
-        m = Z3_solver_get_model(ctx, s);
-        if (m) Z3_model_inc_ref(ctx, m);
-        printf("MODEL:\n%s", Z3_model_to_string(ctx, m));
-
-        //x_plus_y = Z3_mk_add(ctx, 2, args);
-
-        
-        printf("\nevaluating x+y\n");
-        if (Z3_model_eval(ctx, m, eq, 1, &v)) {
-            printf("result = ");
-            display_ast(ctx, stdout, v);
-            printf("\n");
-        }
-        else {
-            exitf("failed to evaluate: x+y");
-        }
-    }
-    else {
-        exitf("the constraints are satisfiable");
-    }
-
-    if (m) Z3_model_dec_ref(ctx, m);
     del_solver(ctx, s);
     Z3_del_context(ctx);
 }
 
-
 int main() {
-    eval();
+    fpa_example();
     return 0;
 }
