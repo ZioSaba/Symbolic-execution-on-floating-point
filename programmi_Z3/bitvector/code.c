@@ -5,13 +5,6 @@
 #include<setjmp.h>
 #include<z3.h>
 
-#define LOG_Z3_CALLS
-
-#ifdef LOG_Z3_CALLS
-#define LOG_MSG(msg) Z3_append_log(msg)
-#else
-#define LOG_MSG(msg) ((void)0)
-#endif
 
 /**
    \defgroup capi_ex C API examples
@@ -31,6 +24,7 @@ void exitf(const char* message)
   exit(1);
 }
 
+
 /**
    \brief exit if unreachable code was reached.
 */
@@ -38,6 +32,7 @@ void unreachable()
 {
     exitf("unreachable code was reached");
 }
+
 
 /**
    \brief Simpler error handler.
@@ -47,6 +42,7 @@ void error_handler(Z3_context c, Z3_error_code e)
     printf("Error code: %d\n", e);
     exitf("incorrect use of Z3");
 }
+
 
 static jmp_buf g_catch_buffer;
 /**
@@ -59,14 +55,15 @@ void throw_z3_error(Z3_context c, Z3_error_code e)
     longjmp(g_catch_buffer, e);
 }
 
+
 /**
    \brief Error handling that depends on checking an error code on the context.
 
 */
-
 void nothrow_z3_error(Z3_context c, Z3_error_code e) {
     // no-op
 }
+
 
 /**
    \brief Create a logical context.
@@ -98,6 +95,7 @@ void del_solver(Z3_context ctx, Z3_solver s)
   Z3_solver_dec_ref(ctx, s);
 }
 
+
 /**
    \brief Create a logical context.
 
@@ -114,6 +112,7 @@ Z3_context mk_context()
     Z3_del_config(cfg);
     return ctx;
 }
+
 
 /**
    \brief Create a logical context.
@@ -132,6 +131,7 @@ Z3_context mk_proof_context() {
     return ctx;
 }
 
+
 /**
    \brief Create a variable using the given name and type.
 */
@@ -140,6 +140,7 @@ Z3_ast mk_var(Z3_context ctx, const char * name, Z3_sort ty)
     Z3_symbol   s  = Z3_mk_string_symbol(ctx, name);
     return Z3_mk_const(ctx, s, ty);
 }
+
 
 /**
    \brief Create a boolean variable using the given name.
@@ -150,6 +151,7 @@ Z3_ast mk_bool_var(Z3_context ctx, const char * name)
     return mk_var(ctx, name, ty);
 }
 
+
 /**
    \brief Create an integer variable using the given name.
 */
@@ -158,6 +160,7 @@ Z3_ast mk_int_var(Z3_context ctx, const char * name)
     Z3_sort ty = Z3_mk_int_sort(ctx);
     return mk_var(ctx, name, ty);
 }
+
 
 /**
    \brief Create a Z3 integer node using a C int.
@@ -168,6 +171,7 @@ Z3_ast mk_int(Z3_context ctx, int v)
     return Z3_mk_int(ctx, v, ty);
 }
 
+
 /**
    \brief Create a real variable using the given name.
 */
@@ -176,6 +180,7 @@ Z3_ast mk_real_var(Z3_context ctx, const char * name)
     Z3_sort ty = Z3_mk_real_sort(ctx);
     return mk_var(ctx, name, ty);
 }
+
 
 /**
    \brief Create the unary function application: <tt>(f x)</tt>.
@@ -186,6 +191,7 @@ Z3_ast mk_unary_app(Z3_context ctx, Z3_func_decl f, Z3_ast x)
     return Z3_mk_app(ctx, f, 1, args);
 }
 
+
 /**
    \brief Create the binary function application: <tt>(f x y)</tt>.
 */
@@ -194,6 +200,7 @@ Z3_ast mk_binary_app(Z3_context ctx, Z3_func_decl f, Z3_ast x, Z3_ast y)
     Z3_ast args[2] = {x, y};
     return Z3_mk_app(ctx, f, 2, args);
 }
+
 
 /**
    \brief Check whether the logical context is satisfiable, and compare the result with the expected result.
@@ -224,6 +231,7 @@ void check(Z3_context ctx, Z3_solver s, Z3_lbool expected_result)
     }
     if (m) Z3_model_dec_ref(ctx, m);
 }
+
 
 /**
    \brief Prove that the constraints already asserted into the logical
@@ -286,6 +294,7 @@ void prove(Z3_context ctx, Z3_solver s, Z3_ast f, bool is_valid)
     /* restore scope */
     Z3_solver_pop(ctx, s, 1);
 }
+
 
 /**
    \brief Assert the axiom: function f is injective in the i-th argument.
@@ -363,6 +372,7 @@ void assert_inj_axiom(Z3_context ctx, Z3_solver s, Z3_func_decl f, unsigned i)
     free(xs);
 }
 
+
 /**
    \brief Assert the axiom: function f is commutative.
 
@@ -398,6 +408,7 @@ void assert_comm_axiom(Z3_context ctx, Z3_solver s, Z3_func_decl f)
         Z3_solver_assert(ctx, s, Z3_ast_vector_get(ctx, q, i));
     }
 }
+
 
 /**
    \brief Z3 does not support explicitly tuple updates. They can be easily implemented
@@ -446,6 +457,7 @@ Z3_ast mk_tuple_update(Z3_context c, Z3_ast t, unsigned i, Z3_ast new_val)
     return result;
 }
 
+
 /**
    \brief Display a symbol in the given output stream.
 */
@@ -462,6 +474,7 @@ void display_symbol(Z3_context c, FILE * out, Z3_symbol s)
         unreachable();
     }
 }
+
 
 /**
    \brief Display the given type.
@@ -519,6 +532,7 @@ void display_sort(Z3_context c, FILE * out, Z3_sort ty)
     }
 }
 
+
 /**
    \brief Custom ast pretty printer.
 
@@ -561,6 +575,7 @@ void display_ast(Z3_context c, FILE * out, Z3_ast v)
         fprintf(out, "#unknown");
     }
 }
+
 
 /**
    \brief Custom function interpretations pretty printer.
@@ -618,6 +633,7 @@ void display_function_interpretations(Z3_context c, FILE * out, Z3_model m)
     }
 }
 
+
 /**
    \brief Custom model pretty printer.
 */
@@ -646,6 +662,7 @@ void display_model(Z3_context c, FILE * out, Z3_model m)
     }
     display_function_interpretations(c, out, m);
 }
+
 
 /**
    \brief Similar to #check, but uses #display_model instead of #Z3_model_to_string.
@@ -679,6 +696,7 @@ void check2(Z3_context ctx, Z3_solver s, Z3_lbool expected_result)
 
 }
 
+
 /**
    \brief Display Z3 version in the standard output.
 */
@@ -690,24 +708,6 @@ void display_version()
 }
 /*@}*/
 
-/**
-   @name Examples
-*/
-/*@{*/
-/**
-   \brief "Hello world" example: create a Z3 logical context, and delete it.
-*/
-void simple_example()
-{
-    Z3_context ctx;
-    LOG_MSG("simple_example");
-    printf("\nsimple_example\n");
-
-    ctx = mk_context();
-
-    /* delete logical context */
-    Z3_del_context(ctx);
-}
 
 
 
@@ -722,7 +722,6 @@ void bitvector_example1()
     Z3_ast             x, zero, ten, x_minus_ten, c1, c2, thm;
 
     printf("\nbitvector_example1\n");
-    LOG_MSG("bitvector_example1");
 
 
     bv_sort   = Z3_mk_bv_sort(ctx, 32);
@@ -741,6 +740,7 @@ void bitvector_example1()
     del_solver(ctx, s);
     Z3_del_context(ctx);
 }
+
 
 /**
    \brief Find x and y such that: x ^ y - 103 == x * y
@@ -761,7 +761,6 @@ void bitvector_example2()
     Z3_ast ctr = Z3_mk_eq(ctx, lhs, rhs);
 
     printf("\nbitvector_example2\n");
-    LOG_MSG("bitvector_example2");
     printf("find values of x and y, such that x ^ y - 103 == x * y\n");
 
     /* add the constraint <tt>x ^ y - 103 == x * y<\tt> to the logical context */
@@ -773,6 +772,7 @@ void bitvector_example2()
     del_solver(ctx, s);
     Z3_del_context(ctx);
 }
+
 
 /**
    \brief Demonstrate how to use #Z3_eval.
@@ -786,7 +786,6 @@ void eval_example1()
     Z3_model m = 0;
 
     printf("\neval_example1\n");
-    LOG_MSG("eval_example1");
 
 
     /****************************/
@@ -817,7 +816,7 @@ void eval_example1()
     /* find model for the constraints above */
     if (Z3_solver_check(ctx, s) == Z3_L_TRUE) {
         Z3_ast   x_plus_y;
-        Z3_ast   args[2] = {x, y};
+        //Z3_ast   args[2] = {x, y};
         Z3_ast v;
         m = Z3_solver_get_model(ctx, s);
         if (m) Z3_model_inc_ref(ctx, m);
@@ -847,9 +846,6 @@ void eval_example1()
 
 
 int main() {
-#ifdef LOG_Z3_CALLS
-    Z3_open_log("z3.log");
-#endif
     bitvector_example1();
     bitvector_example2();
     eval_example1();
