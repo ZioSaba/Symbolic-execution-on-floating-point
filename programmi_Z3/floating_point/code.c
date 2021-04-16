@@ -4,6 +4,7 @@
 #include<memory.h>
 #include<setjmp.h>
 #include<z3.h>
+#include<math.h>
 
 
 /**
@@ -705,12 +706,9 @@ void eval()
 {
     Z3_context ctx = mk_context();
     Z3_solver  s = mk_solver(ctx);
-    //Z3_ast x, y, two;
-    //Z3_ast c1, c2;
     Z3_model m = 0;
 
-    printf("\neval_example1\n");
-
+    printf("\nZ3_add\n");
 
     /****************************/
     Z3_sort FP_sort = Z3_mk_fpa_sort(ctx, 11, 53);
@@ -731,21 +729,13 @@ void eval()
     Z3_ast c2 = Z3_mk_fpa_gt(ctx, x, two);
     /****************************/
 
-    
-    //x          = mk_int_var(ctx, "x");
-    //y          = mk_int_var(ctx, "y");
-    //two        = mk_int(ctx, 2);
-
-
     /* assert x < y */
-    //c1         = Z3_mk_lt(ctx, x, y);
     Z3_solver_assert(ctx, s, c1);
 
     /* assert x > 2 */
-    //c2         = Z3_mk_gt(ctx, x, two);
     Z3_solver_assert(ctx, s, c2);
 
-    
+    //Solve: x+y with x<y & x > 2
 
     /* find model for the constraints above */
     if (Z3_solver_check(ctx, s) == Z3_L_TRUE) {
@@ -765,9 +755,24 @@ void eval()
         printf("\nevaluating x+y\n");
         if (Z3_model_eval(ctx, m, eq, 1, &v)) {
             printf("result = ");
-            display_ast(ctx, stdout, v);
-            printf("v: %s\n", Z3_ast_to_string(ctx, v));
-            //Z3_mk_fpa_to_real
+            printf("%s\n", Z3_ast_to_string(ctx, v));
+
+
+            int segno_2;
+            bool segno = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_sign_bv(ctx, v), &segno_2);
+            printf("\n segno = %d\n", segno_2);
+
+            printf("\n esponente: %s", Z3_fpa_get_numeral_exponent_string(ctx, v, 1));
+
+            int esp_2;
+            bool esp = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_exponent_bv(ctx, v, 1), &esp_2);
+            printf("\n esp_2 = %d\n", esp_2);
+            // 196
+        
+            printf("\n mantissa: %s\n", Z3_fpa_get_numeral_significand_string(ctx, v));
+            Z3_ast mant_2 = Z3_fpa_get_numeral_significand_bv(ctx, v);
+            display_ast(ctx, stdout, mant_2);
+
             printf("\n");
         }
         else {
