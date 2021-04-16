@@ -828,10 +828,10 @@ void eval_example1()
         printf("\nevaluating x+y\n");
         if (Z3_model_eval(ctx, m, x_plus_y, 1, &v)) {
             int res;
-            Z3_get_numeral_int(ctx, v, &res);
+            //Z3_get_numeral_int(ctx, v, &res);
             printf("result = ");
             display_ast(ctx, stdout, v);
-            printf("in int: %d", res);
+            //printf("in int: %d", res);
             printf("\n");
         }
         else {

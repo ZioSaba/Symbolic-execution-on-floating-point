@@ -717,7 +717,7 @@ void eval()
 
     Z3_sort rounding_mode = Z3_mk_fpa_rounding_mode_sort(ctx);
     Z3_symbol rm_sym = Z3_mk_string_symbol(ctx, "rm");
-    Z3_ast rm = Z3_mk_const(ctx, rm_sym, FP_sort);
+    Z3_ast rm = Z3_mk_const(ctx, rm_sym, rounding_mode);
 
     Z3_symbol x_sym = Z3_mk_string_symbol(ctx, "x");
     Z3_ast x = Z3_mk_const(ctx, x_sym, FP_sort);
@@ -725,7 +725,7 @@ void eval()
     Z3_symbol y_sym = Z3_mk_string_symbol(ctx, "y");
     Z3_ast y = Z3_mk_const(ctx, y_sym, FP_sort);
 
-    Z3_ast two = Z3_mk_fpa_numeral_float(ctx, 2.0, FP_sort);
+    Z3_ast two = Z3_mk_fpa_numeral_double(ctx, 2.0, FP_sort);
 
     Z3_ast c1 = Z3_mk_fpa_lt(ctx, x, y);
     Z3_ast c2 = Z3_mk_fpa_gt(ctx, x, two);
@@ -752,21 +752,22 @@ void eval()
         
         Z3_symbol somma_sym = Z3_mk_string_symbol(ctx, "x_plus_y");
         Z3_ast x_plus_y = Z3_mk_const(ctx, somma_sym, FP_sort);
-        Z3_ast eq = Z3_mk_eq(ctx, x_plus_y, Z3_mk_fpa_add(ctx, rm, x, y));
-        
+        Z3_ast eq = Z3_mk_fpa_add(ctx, rm, x, y);
+
+
         //Z3_ast   args[2] = {x, y};
         Z3_ast v;
         m = Z3_solver_get_model(ctx, s);
         if (m) Z3_model_inc_ref(ctx, m);
         printf("MODEL:\n%s", Z3_model_to_string(ctx, m));
 
-        //x_plus_y = Z3_mk_add(ctx, 2, args);
-
         
         printf("\nevaluating x+y\n");
         if (Z3_model_eval(ctx, m, eq, 1, &v)) {
             printf("result = ");
             display_ast(ctx, stdout, v);
+            printf("v: %s\n", Z3_ast_to_string(ctx, v));
+            //Z3_mk_fpa_to_real
             printf("\n");
         }
         else {
