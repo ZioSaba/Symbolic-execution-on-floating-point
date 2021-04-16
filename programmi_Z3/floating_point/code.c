@@ -766,12 +766,13 @@ void eval()
 
             int esp_2;
             bool esp = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_exponent_bv(ctx, v, 1), &esp_2);
+            esp_2 = esp_2 - 1023;
             printf("\n esp_2 = %d\n", esp_2);
-            // 196
         
             printf("\n mantissa: %s\n", Z3_fpa_get_numeral_significand_string(ctx, v));
-            Z3_ast mant_2 = Z3_fpa_get_numeral_significand_bv(ctx, v);
-            display_ast(ctx, stdout, mant_2);
+
+            long double res = pow(2, esp_2)*1.0000019073486325904553950749686919152736663818359375;
+            printf("\n Numero totale: %Le", res);
 
             printf("\n");
         }
