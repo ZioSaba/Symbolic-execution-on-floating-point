@@ -3,8 +3,12 @@
 #include<stdarg.h>
 #include<memory.h>
 #include<setjmp.h>
+
 #include<z3.h>
 #include<math.h>
+#include<stdint.h>
+#include<inttypes.h>
+
 
 
 /**
@@ -769,10 +773,17 @@ void eval()
             esp_2 = esp_2 - 1023;
             printf("\n esp_2 = %d\n", esp_2);
         
-            printf("\n mantissa: %s\n", Z3_fpa_get_numeral_significand_string(ctx, v));
+            printf("\n mantissa: %s", Z3_fpa_get_numeral_significand_string(ctx, v));
+            printf("\n");
+            uint64_t* mantissa = malloc(sizeof(uint64_t));
+            bool prova = Z3_fpa_get_numeral_significand_uint64(ctx, v, mantissa);
+            printf("%" PRIu64 "\n", *mantissa);
+            
 
-            long double res = pow(2, esp_2)*1.0000019073486325904553950749686919152736663818359375;
+            long double res = pow(-1, segno_2) * pow(2, esp_2) * 1.0000019073486325904553950749686919152736663818359375;
             printf("\n Numero totale: %Le", res);
+
+            free(mantissa);
 
             printf("\n");
         }
