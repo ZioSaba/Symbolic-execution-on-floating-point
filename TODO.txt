@@ -1,8 +1,3 @@
-Secondo me puoi iniziare a giocare con Z3. Prova ad creare un programma che include header z3 e linka z3 e:
-- esegue questo (che usa bitvector, ossia il tipo Z3 usato normalmente per rappresentare i dati interi)                     -> https://github.com/Z3Prover/z3/blob/master/examples/c/test_capi.c#L1441
-- esegue questo (che non usa i bitvector ma il tipo "int" ma che mostra come chiamare Z3 eval per avere un assegnamento)    -> https://github.com/Z3Prover/z3/blob/master/examples/c/test_capi.c#L1473
-- combina i due precenti esempi: modifica il secondo esempio per usare i bitvector
-
 Fatto ciò, dovresti avere un idea di quello che attualmente fa un esecutore concolico:
 - definisce dei bitvector non costanti da 8 bit per ogni byte dell'input. Ogni bitvector è per noi un simbolo.
 - quando il programma esegue istruzioni, se almeno uno degli operandi è associato ad un bitvector non costante, allora riproduce l'operazione usando le api di Z3 sui rispettivi operandi, es. una  sub viene gestita usando Z3_mk_bvsub

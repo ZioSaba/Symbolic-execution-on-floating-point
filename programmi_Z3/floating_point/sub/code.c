@@ -761,7 +761,7 @@ void eval()
             printf("result = ");
             printf("%s\n", Z3_ast_to_string(ctx, v));
 
-            /*
+
             int segno_2;
             bool segno = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_sign_bv(ctx, v), &segno_2);
             printf("\n segno = %d\n", segno_2);
@@ -784,8 +784,6 @@ void eval()
             printf("\n Numero totale: %Le", res);
 
             free(mantissa);
-
-            */
 
             printf("\n");
         }
