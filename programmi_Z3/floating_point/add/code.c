@@ -749,7 +749,6 @@ void eval()
         Z3_ast eq = Z3_mk_fpa_add(ctx, rm, x, y);
 
 
-        //Z3_ast   args[2] = {x, y};
         Z3_ast v;
         m = Z3_solver_get_model(ctx, s);
         if (m) Z3_model_inc_ref(ctx, m);

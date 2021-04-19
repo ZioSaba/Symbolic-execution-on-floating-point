@@ -825,7 +825,7 @@ void eval_example1()
         //x_plus_y = Z3_mk_add(ctx, 2, args);
         x_plus_y = Z3_mk_bvadd(ctx, x, y);
         
-        printf("\nevaluating x+y\n");
+        printf("\nevaluating x+y with x<y & x>2\n");
         if (Z3_model_eval(ctx, m, x_plus_y, 1, &v)) {
             int res;
             //Z3_get_numeral_int(ctx, v, &res);

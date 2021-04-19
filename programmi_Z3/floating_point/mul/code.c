@@ -712,7 +712,7 @@ void eval()
     Z3_solver  s = mk_solver(ctx);
     Z3_model m = 0;
 
-    printf("\nZ3_add\n");
+    printf("\nZ3_mul\n");
 
     /****************************/
     Z3_sort FP_sort = Z3_mk_fpa_sort(ctx, 11, 53);
@@ -727,68 +727,43 @@ void eval()
     Z3_symbol y_sym = Z3_mk_string_symbol(ctx, "y");
     Z3_ast y = Z3_mk_const(ctx, y_sym, FP_sort);
 
-    Z3_ast two = Z3_mk_fpa_numeral_double(ctx, 2.0, FP_sort);
+    Z3_ast zero = Z3_mk_fpa_numeral_double(ctx, 0.0, FP_sort);
 
-    Z3_ast c1 = Z3_mk_fpa_lt(ctx, x, y);
-    Z3_ast c2 = Z3_mk_fpa_gt(ctx, x, two);
+    Z3_ast c1 = Z3_mk_fpa_lt(ctx, y, zero);
+    Z3_ast c2 = Z3_mk_fpa_gt(ctx, x, zero);
     /****************************/
 
-    /* assert x < y */
+    /* assert y<0 */
     Z3_solver_assert(ctx, s, c1);
-
-    /* assert x > 2 */
+    
+    /* asset x>0 */
     Z3_solver_assert(ctx, s, c2);
 
-    //Solve: x+y with x<y & x > 2
+
+    //Solve: x*y with x>0 & y<0
 
     /* find model for the constraints above */
     if (Z3_solver_check(ctx, s) == Z3_L_TRUE) {
         
-        Z3_symbol somma_sym = Z3_mk_string_symbol(ctx, "x_plus_y");
-        Z3_ast x_plus_y = Z3_mk_const(ctx, somma_sym, FP_sort);
-        Z3_ast eq = Z3_mk_fpa_add(ctx, rm, x, y);
+        Z3_symbol moltiplicazione_sym = Z3_mk_string_symbol(ctx, "x_mul_y");
+        Z3_ast x_mul_y = Z3_mk_const(ctx, moltiplicazione_sym, FP_sort);
+        Z3_ast eq = Z3_mk_fpa_mul(ctx, rm, x, y);
 
 
-        //Z3_ast   args[2] = {x, y};
         Z3_ast v;
         m = Z3_solver_get_model(ctx, s);
         if (m) Z3_model_inc_ref(ctx, m);
         printf("MODEL:\n%s", Z3_model_to_string(ctx, m));
 
         
-        printf("\nevaluating x+y\n");
+        printf("\nevaluating x*y with x>0 & y<0\n");
         if (Z3_model_eval(ctx, m, eq, 1, &v)) {
             printf("result = ");
             printf("%s\n", Z3_ast_to_string(ctx, v));
-
-
-            int segno_2;
-            bool segno = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_sign_bv(ctx, v), &segno_2);
-            printf("\n segno = %d\n", segno_2);
-
-            printf("\n esponente: %s", Z3_fpa_get_numeral_exponent_string(ctx, v, 1));
-
-            int esp_2;
-            bool esp = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_exponent_bv(ctx, v, 1), &esp_2);
-            esp_2 = esp_2 - 1023;
-            printf("\n esp_2 = %d\n", esp_2);
-        
-            printf("\n mantissa: %s", Z3_fpa_get_numeral_significand_string(ctx, v));
-            printf("\n");
-            uint64_t* mantissa = malloc(sizeof(uint64_t));
-            bool prova = Z3_fpa_get_numeral_significand_uint64(ctx, v, mantissa);
-            printf("%" PRIu64 "\n", *mantissa);
-            
-
-            long double res = pow(-1, segno_2) * pow(2, esp_2) * 1.0000019073486325904553950749686919152736663818359375;
-            printf("\n Numero totale: %Le", res);
-
-            free(mantissa);
-
             printf("\n");
         }
         else {
-            exitf("failed to evaluate: x+y");
+            exitf("failed to evaluate: x*y");
         }
     }
     else {
