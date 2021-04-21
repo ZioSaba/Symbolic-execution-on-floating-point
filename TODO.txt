@@ -12,11 +12,7 @@ Fai un po' di prove e fammi sapere.
 OT: ho scoperto che SymCC (che ha pezzi in comunque con SymQEMU) ha un supporto preliminare ai floating point. Come per KLEE, le scelte che hanno fatto loro ci possono guidare nello nostre scelte. -> https://github.com/eurecom-s3/symcc/blob/master/runtime/simple_backend/Runtime.cpp
 
 
-Per x86, il manuale di riferimento è quello Intel. Guarda ad esempio sezione 4.9 del volume 1. Da quello che so le eccezioni sono gestite in vari modi:
-(1) viene settato un registro, analogo a eflags ma per floating point, che può essere analizzato (simile a come fa una jcc per i condition code memorizzati nell'eflags) per capire eventuali errori. 
-(2) alcune eccezioni generano interrupt che il kernel decide di gestire generando un segnale, es. se dividi per zero, il kernel manda al programma SIGFE.
 Sempre nel volume 1 trovi tutto il capito 8 dedicato a x87. Il capitolo 9 copre MMX ed il 10 copre SSE. 
-
 Nota: nel volume 2 trovi la descrizione delle istruzioni come hai visto fino ad ora sui siti disponibili online.
 
 Non è roba semplice da capire ma se ci perdi un po' di tempo, dovresti poter aver un'idea più chiara. A noi non serve capire tutto ma almeno avere un'intuizione su come funziona. Io nono esperto della parte x87/SSE.
