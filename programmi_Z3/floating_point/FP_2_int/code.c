@@ -740,6 +740,7 @@ void conversion_FP_int()
     Z3_ast c1 = Z3_mk_fpa_gt(ctx, num_FP, uno_FP);
     //Z3_ast c2 = Z3_mk_gt(ctx, num_int, zero_int);
 
+    //ciao
 
     Z3_solver_assert(ctx, s, c1);
     //Z3_solver_assert(ctx, s, c2);
