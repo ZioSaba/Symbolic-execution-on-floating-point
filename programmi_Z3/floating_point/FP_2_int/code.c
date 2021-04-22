@@ -726,35 +726,37 @@ void conversion_FP_int()
 
     Z3_sort FP_sort = Z3_mk_fpa_sort(ctx, 11, 53);
 
+    /* Arrotondamento generico, non specificato */
     Z3_sort rounding_mode = Z3_mk_fpa_rounding_mode_sort(ctx);
     Z3_symbol rm_sym = Z3_mk_string_symbol(ctx, "rm");
     Z3_ast rm = Z3_mk_const(ctx, rm_sym, rounding_mode);
 
+    //Z3_ast rm = Z3_mk_fpa_round_toward_negative(ctx);         /* equivalente di floor */
+    //Z3_ast rm = Z3_mk_fpa_round_toward_positive(ctx);         /* equivalente di ceiling */
+    //Z3_ast rm = Z3_mk_fpa_round_toward_zero(ctx);             /* tronca la parte decimale */
+    //Z3_ast rm = Z3_mk_fpa_round_nearest_ties_to_even(ctx);    /* arrotondamento di 0.5 all'intero più vicino generico */
+    //Z3_ast rm = Z3_mk_fpa_round_nearest_ties_to_away(ctx);    /* arrotondamento di 0.5 al valore positivo più grande o negativo più piccolo */
+    //Z3_inc_ref(ctx, rm);
+
     Z3_symbol FP_sym = Z3_mk_string_symbol(ctx, "num_FP");
     Z3_ast num_FP = Z3_mk_const(ctx, FP_sym, FP_sort);
 
-    //Z3_ast zero_int = Z3_mk_numeral(ctx, "0", int_sort);
-    Z3_ast uno_FP = Z3_mk_fpa_numeral_double(ctx, 1.0, FP_sort);
+    Z3_ast uno_FP = Z3_mk_fpa_numeral_double(ctx, 2.0, FP_sort);
     Z3_ast zero_FP = Z3_mk_fpa_numeral_double(ctx, 0.0, FP_sort);
 
     Z3_ast c1 = Z3_mk_fpa_gt(ctx, num_FP, uno_FP);
-    //Z3_ast c2 = Z3_mk_gt(ctx, num_int, zero_int);
-
-    //ciao
-
     Z3_solver_assert(ctx, s, c1);
-    //Z3_solver_assert(ctx, s, c2);
 
     Z3_ast v;
     if (Z3_solver_check(ctx, s) == Z3_L_TRUE) {
 
         m = Z3_solver_get_model(ctx, s);
         if (m) Z3_model_inc_ref(ctx, m);
-        printf("MODEL:\n%s", Z3_model_to_string(ctx, m));
 
         Z3_ast eq = Z3_mk_fpa_add(ctx, rm, num_FP, zero_FP);     
         
         if (Z3_model_eval(ctx, m, eq, 1, &v)) {
+            printf("\nMODEL:\nnum_FP -> %s", Z3_ast_to_string(ctx, v));
             printf("\n");
         }
         else {

@@ -1,13 +1,13 @@
-Ho scoperto che SymCC (che ha pezzi in comunque con SymQEMU) ha un supporto preliminare ai floating point. 
-Come per KLEE, le scelte che hanno fatto loro ci possono guidare nello nostre scelte. -> https://github.com/eurecom-s3/symcc/blob/master/runtime/simple_backend/Runtime.cpp
-
 Guardati con attenzione come usano le API di Z3 per i floating point in:
 - KLEE: https://github.com/srg-imperial/klee-float/blob/tool_exchange_03.05.2017_rebase_extra_bug_fixes/lib/Solver/Z3Builder.cpp
 - SymCC: https://github.com/eurecom-s3/symcc/blob/master/runtime/simple_backend/Runtime.cpp
 Loro come modellano i floating point? Ha senso secondo te?
-
 Purtroppo neanchè io conosco alcuni dettagli e sta a te metterti a fare delle prove per capire le varie API cosa fanno. Ci vuole un po' di pazienza ed intraprendenza. 
 Tieni conto che a volte l'unico per sapere certe cose è: (a) provare, (b) vedere il codice sorgente.
+
+OK(?)
+
+
 
 
 Sempre nel volume 1 trovi tutto il capito 8 dedicato a x87. Il capitolo 9 copre MMX ed il 10 copre SSE. 
