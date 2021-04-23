@@ -24,7 +24,6 @@ int foo(char* buf) {
         return 2;
     }
     
-;
 }
 
 int main() {
