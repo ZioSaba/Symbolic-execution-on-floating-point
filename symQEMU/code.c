@@ -8,6 +8,7 @@ int foo(char* buf) {
     
     char* root = "root";
     char* user = "user";
+    char* num = "10";
 
     if (!memcmp(buf, root, strlen(root))){
         printf("Hello, superuser\n");
@@ -19,11 +20,12 @@ int foo(char* buf) {
         return 1;
     }
 
-    else {
-        printf("Hello, %s", buf);
-        return 2;
+    else if (!memcmp(buf, num, strlen(num))){
+        printf("HAI INSERITO 10\n");
+        return 10;
     }
-    
+
+    return 1234564789;    
 }
 
 int main() {
@@ -34,7 +36,6 @@ int main() {
         return 1;
     }
 
-    //printf("%s", buf);
     //printf("%ld\n", strlen(buf)-1);
 
     printf("%d\n", foo(buf));
