@@ -5,6 +5,9 @@ Loro come modellano i floating point? Ha senso secondo te?
 Purtroppo neanchè io conosco alcuni dettagli e sta a te metterti a fare delle prove per capire le varie API cosa fanno. Ci vuole un po' di pazienza ed intraprendenza. 
 Tieni conto che a volte l'unico per sapere certe cose è: (a) provare, (b) vedere il codice sorgente.
 
+IMPORTANTE SE USO Z3_mk_context_rc!!!! (context with custom configuration)
+Ricordati sempre di incrementrare il contatore di referenziamento ogni volta che crei un oggetto, perché se lo diminuisci e va a 0 viene deallocato.
+
 OK(?)
 
 
@@ -41,6 +44,8 @@ Occorre fare una tabella in cui dici: es. un registro x86 X, contiene in x86 Y b
 convertito ad intero (per via di istruzioni x86 che fanno lo conversione) allora userò questa operazione Z3, etc.
 
 
+
+
 Altro step da fare a breve è prendere mano con SymQEMU
 - installalo
 - esegui delle prime prove su programmi con operazioni intere su dati simbolici
@@ -48,4 +53,4 @@ Guardati il paper di SymQEMU per farti un'idea più precisa su come funziona. No
 Parti da piccoli programmi che leggono da file un certo numero di byte, fanno qualche computazione e qualche branch su di essi. 
 SymQEMU in presenza di branch condition dovrebbe generarti gli input "alternativi" che visitano la direzione alternativa a quella presa dal path corrente.
 
-
+OK (?)
