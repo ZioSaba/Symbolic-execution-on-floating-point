@@ -20,10 +20,20 @@ int foo(char* buf) {
         return 1;
     }
 
+    
     else if (!memcmp(buf, num, strlen(num))){
         printf("HAI INSERITO 10\n");
         return 10;
     }
+    
+
+    /* NON FUNGE
+    int numero = atoi(buf);
+    if (numero == 10){
+        printf("HAI INSERITO 10\n");
+        return 10;
+    }
+    */
 
     return 1234564789;    
 }
