@@ -1,15 +1,14 @@
-dir_command=/home/zio-saba/Scrivania/symcc/build/
+dir_command=/home/zio-saba/Scrivania/symqemu/BUILD/x86_64-linux-user/symqemu-x86_64
 dir_test=/home/zio-saba/Scrivania/progetto_laurea/symQEMU/
 dir_res=/home/zio-saba/Scrivania/progetto_laurea/symQEMU/risultati/
+flag= -d in_asm,op_opt
 
 
-test: all-before code.c
-	cd $(dir_command); \
-	./symcc $(dir_test)code.c -o $(dir_test)test
+run: 
+	SYMCC_OUTPUT_DIR=./risultati  /home/zio-saba/Scrivania/symqemu/BUILD/x86_64-linux-user/symqemu-x86_64 -d in_asm,op_opt,out_asm "path_programma"
 
-all-before: 
-	cd $(dir_test); \
-	export SYMCC_OUTPUT_DIR=./risultati
+test: code.c
+	gcc $(dir_test)code.c -o $(dir_test)test
 
 clean:
 	cd $(dir_res); \
