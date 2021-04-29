@@ -6,3 +6,40 @@ Dopo che il "basic block" si ferma, il programma traduce il blocco in TCG (Tiny 
 Una volta fatto questo, una volta per volta, mostra il TCG per ogni istruzione presente nel programma.
 Se l'istruzione non la conosce e non sa come modellarla, non è presente alcun codice aggiuntivo.
 
+Il TCG presente nel disassemblato è stato aggiunto sia da QEMU che da symQEMU, questo perché il secondo aggiunge alcune istruzioni che usano operandi "*_expr" e che sono appunto i dati simbolici. Tutte le call di tipo "sym_***" sono anch'esse aggiunte da symQEMU.
+
+QEMU traduce da x86 a TCG, symQEMU invece aggiunge il codice della sua instrumentazione mentre avviene la traduzione x86.
+
+Se il "basic block" si era fermato a causa di una chiamata a funzione, ricorsivamente symQEMU va a verificare il codice che costituisce la malloc e vi applica i medesimi passaggi che sta applicando al nostro programma (divisione in basic block, traduzione in TCG del blocco e delle singole istruzioni che lo costituiscono, ecc...)
+
+Una  volta che tutto il TCG è stato generato, QEMU fa nuovamente la traduzione in x86 e che la CPU esegue effettivamente.
+Quando adesso il programma originale andava, per esempio, a leggere il contenuto di un registro, symQEMU ha introdotto tutto il codice necessario affinché la CPU vada a leggere le informazioni presenti nella struct CPUX86State, in modo quindi che la CPU vada a lavorare sulla proiezione virtuale di se stessa generata da symQEMU.
+
+symQEMU ha due tipi di registri, quelli tmp** e quelli tmp**_expr
+
+Quando symQEMU vede che QEMU fa utilizzo di dati concreti (cioè costanti previsti nel codice), allora va a mettere NULL (ovvero il valore 0) all'interno dell'equivalente simbolico del registro in cui viene fatto uso del dato concreto. 
+Così facendo il registro simbolico non contiene più un puntatore ad una espressione, ma adesso contiene 0 e quindi non viene più toccato altrimenti.
+
+Le istruzioni eseguite da QEMU prevedono operandi espliciti, quindi la destinazione è l'operando più a sinistra.
+Se QEMU fa una qualche operazinone matematica, ad esempio, allora symQEMU esegue le sue funzioni simboliche per costruire l'espressione situata in tale registro.
+Una chiamata di symQEMU è strutturata nel seguente modo:
+- call sym_***_typeN, $0x5, $num_risultati, dest_expr, sorg1_reale, sorg1_expr, sorg2_reale, sorg2_expr.
+
+Nell'eseguire questa funzione, symQEMU verifica se le sorgenti indicate sono effettivamente ancora registri simbolici o meno:
+- se tutti e due i registri sono simbolici, viene costruita l'espressione simbolica e questa è salvata in dest_expr
+- se solo uno dei due registri è simbolico viene costruita comunque l'espressione simbolica, ma viene aggiunto un valore costante all'espressione simbolica dell'altro
+- se nessuno dei due registri è simbolico non viene fatto nulla, il programma sta manipolando dati concreti e questo viene lasciato fare a QEMU
+
+
+DOVE SONO SITUATE LE CALL sym_qualcosa: symqemu/accel/tcg/tcg-runtime-sym.c
+Come vengono costruiti questi helper? (Line  40, 84 e 105)
+Vengono definite tramite delle macro, che a loro volta chiamano altre funzioni, e che consentono di costruire in modo più ottimale helper simili tra loro.
+Ad esempio, nel caso della ADD, vengono passati come parametri i nomi che si vogliono dare alla funzione che usa QEMU e quella che usa symcc (in questo caso entrambi add).
+Il parametro per QEMU viene poi, a sua volta, passato ad un'altra macro che verifica i seguenti casi:
+- se sono entrambi a NULL, non fa nulla
+- se almeno una delle due non è NULL, costruisce l'epsressione simbolica del dato costante con l'altra espressione
+
+Quindi si ritorna alla macro precedente e viene restituita la funzione sym_*** cercata.
+
+
+
