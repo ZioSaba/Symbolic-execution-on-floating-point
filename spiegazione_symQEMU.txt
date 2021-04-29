@@ -1,0 +1,8 @@
+Tutto ciò che compare PRIMA del main riguarda come viene caricato in memoria il programma, cosa accade prima del main ed il loader.
+Tutto cio che viene DOPO la riga IN: main è l'esecuzione byte per byte dell'assemblato del codice.
+
+SymQEMU divide l'esecuzione del codice in diversi "basic block", ovvero un insieme di istruzioni fino ad un salto condizionato oppure una call a qualche funzione.
+Dopo che il "basic block" si ferma, il programma traduce il blocco in TCG (Tiny Code Generation), un linguaggio usato da QEMU per analizzare il linguaggio macchina di qualsiasi architettura che sopporta.
+Una volta fatto questo, una volta per volta, mostra il TCG per ogni istruzione presente nel programma.
+Se l'istruzione non la conosce e non sa come modellarla, non è presente alcun codice aggiuntivo.
+
