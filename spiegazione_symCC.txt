@@ -1,0 +1,10 @@
+symcc/runtime/qsym_backend/Runtime.cpp
+Qui sono locate tutte le funzioni sym_** chiamate a runtime da symCC
+Molte di queste fanno utilizzo di una classe chiamata "g_expr_builder", che mette a disposizione una serie di meotdi che vengono utilizzato per la creazione delle espressioni
+
+
+symcc/rutime/qsym_backend/qsym/pintool/expr_builder.h
+Classe che contiene la defizione di expr_builder
+
+symcc/rutime/qsym_backend/qsym/pintool/codegen/expr_builder.cpp
+Contiene l'implementazione dei metodi contenuti nell'header
