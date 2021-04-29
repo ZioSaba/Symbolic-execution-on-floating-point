@@ -41,5 +41,7 @@ Il parametro per QEMU viene poi, a sua volta, passato ad un'altra macro che veri
 
 Quindi si ritorna alla macro precedente e viene restituita la funzione sym_*** cercata.
 
+Queste funzioni sym_qualcosa vanno poi ad interfacciarsi con symCC più sotto, che effettua la traduzione in Z3 e che quindi dialoga con il solver.
+
 
 
