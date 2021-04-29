@@ -1,0 +1,7 @@
+Comandi utili
+
+- $ ldd ./eseguibile 
+Mostra le librerie caricate a runtime dall'eseguibile
+
+- $ grep -i "stringa"
+Cerca l'argomento passato tra doppi apici, il flag -i significa che non è case-sensitive
