@@ -66,9 +66,34 @@ PROSSIME COSE DA FARE!
 Aggiustare gli helper tipo mettendoci 'printf("pippo\n");' per essere sicuro che quell'helper viene effettivamente invocato da QEMU al momento dell'esecuzione del codice, eventualmente segnandomi in giallo quelle che magari non vengono effettivamente invocate e che quindi non sono di nostro interesse (screma la tabella e riduci il lavoro).
 Aggiungi una colonna di tabella ad ogni istruzione.
 Studiare bene se una certa funzione può o meno essere modellata con Z3, non è detto che al momento ci sia il supporto necessario per farlo, o magari le modellano in modo sbagliato.
+Lanciarli singolarmente con symQEMU e vedere quali helper chiama, creare quindi l'helper che manipola lo stato simbolico.
+In parallelo, studiare come modificare il linguaggio che utilizza a runtime symCC, capire come modificare la gerarchia, dove aggiungere o meno le cose e perché.
+
+Parto da cose semplici, ovvero le 4 operazioni aritmetiche e le conversioni semplici, e capire come gestire simbolicamente tali operazioni.
+Estendere quindi il linguaggio, in modo da poter modellare le operazioni in FP e le conversioni.
+Definire nuove classi in expr.h, così che possa implementare nuovi metodi che poi definisco toZ3 e che si interfacciano quindi con le API di Z3.
+Inoltre, bisogna metter in ogni classe già presente un metodo che converge i dati da int a FP e viceversa
+
+Modificare, all'interno del runtime, come tradurre dal linguaggio di symCC a Z3
+
+
+N.B. Potrebbero esserci helper che gestiscono diverse istruzioni x86, quindi bisogna starci attento.
 
 
 Andare a rivedere nel manuale intel a cosa serve il fp_status
+
+
+Compilare il programma per dirgli di usare i registri XMM ma non quelli YMM o ZMM (Linux dovrebeb già fare tutto da solo)
+
+
+Modifica gli esempi di symQEMU in cui l'input è un file, facendo una tokenizzazione su un qualche simbolo che so divide i vari input (fare un mini-parser)
+
+
+Optimistic
+Quando arriva su un branch viene fatta una query sul solver, che però spesso non è in grado di soddisfare la query totalmente o comunque nel tempo massimo consentito, per provare a generare altri input utili prova quindi a generare un query minimale.
+Una query minimale prevede la semplificazione della richiesta, magari guardando ad esempio solo la seconda parte di una richiesta, ma sono ottimisti che fornendo come soluzione il necessario per risolvere l'ultimo controllo potrebbe comunque esplorare parti interessanti del codice
+
+Prima che symQEMU chiami l'helper associato ad una certa funzione devo aggiungere una call definita da me "sym_qualcosa(arg...)" e, per ogni call all'helper, devo aggiungere subito prima una call alla mia funzione che andrà a modificare lo stato simbolico dovuto all'esecuzione di una istruzione x87 o che fanno utilizzo di registri vettoriali.
 
 
 cpu.h -> Line 1148 struct CPUX86State
@@ -103,18 +128,3 @@ Modella i classici registri x86 XMM
 
 - opmask_regs[NB_OPMASK_REGS]
 Potrebbe mascherare le eccezioni create dai registri in seguito al dato che contengono, ma tocca vedere gli helper cosa fanno o non fanno
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
