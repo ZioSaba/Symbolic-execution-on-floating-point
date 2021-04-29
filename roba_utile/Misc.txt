@@ -5,3 +5,21 @@ Mostra le librerie caricate a runtime dall'eseguibile
 
 - $ grep -i "stringa"
 Cerca l'argomento passato tra doppi apici, il flag -i significa che non è case-sensitive
+
+- $ xxd file.txt
+Legge il file passato come pramaetro e lo stampa in esadecimale, consentendo così la lettura di caratteri non rappresentabili in ASCII
+
+- symqemu-x86_64 -d in_asm,op_opt,out_asm
+  -d = disassemla
+  -in_asm = mostra l'input che viene tradotto in TCG
+  -out_asm = mostra l'output dovuto alla traduzione in TCG fatta precedentemente
+Stampa il codice che esegue QEMU, mano a mano che lo esegue, e la sua traduzione in TCG (vedi spiegazione_symQEMU.txt)
+
+- $ python2 gen_expr_builder.py
+Serve per generare i metodi che costruiscono le espressioni
+
+-ninja
+Va rilanciato ogni volta che viene modificato il runtime
+
+-../configure
+Va rilanciato ogni volta che modifico symQEMU
