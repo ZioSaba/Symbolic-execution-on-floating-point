@@ -1,62 +1,7 @@
-Guardati con attenzione come usano le API di Z3 per i floating point in:
-- KLEE: https://github.com/srg-imperial/klee-float/blob/tool_exchange_03.05.2017_rebase_extra_bug_fixes/lib/Solver/Z3Builder.cpp
-- SymCC: https://github.com/eurecom-s3/symcc/blob/master/runtime/simple_backend/Runtime.cpp
-Loro come modellano i floating point? Ha senso secondo te?
-Purtroppo neanchè io conosco alcuni dettagli e sta a te metterti a fare delle prove per capire le varie API cosa fanno. Ci vuole un po' di pazienza ed intraprendenza. 
-Tieni conto che a volte l'unico per sapere certe cose è: (a) provare, (b) vedere il codice sorgente.
-
-IMPORTANTE SE USO Z3_mk_context_rc!!!! (context with custom configuration)
-Ricordati sempre di incrementrare il contatore di referenziamento ogni volta che crei un oggetto, perché se lo diminuisci e va a 0 viene deallocato.
-
-OK(?)
-
-
 Sempre nel volume 1 trovi tutto il capito 8 dedicato a x87. Il capitolo 9 copre MMX ed il 10 copre SSE. 
 Nota: nel volume 2 trovi la descrizione delle istruzioni come hai visto fino ad ora sui siti disponibili online.
 
 OK(?)
-
-
-
-
-
-Riguardo le istruzioni, QEMU quando eseguirà il codice binario in caso di istruzioni floating andrà ad invocare degli "helper":
-1) fpu_helper: contiene i principali helper per x87, es. helper_fdiv
-2) ops_sse: contiene helper (molti definiti attraverso macro) per SSE/XMM/etc per operazioni sia floating point che packed integers, es. helper_pxor
-Ogni helper dovrebbe grosso modo corrispondere ad un istruzione x86, eventualmente in diverse varianti in base alla taglia del taglia del dato su cui opera.
-Puoi fare un confronto per vedere che non ti sei perso nulla di importante? O almeno avere una chiara idea di quello che hai considerato fino ad ora e cosa andrà aggiunto in una fase successiva. 
-In pratica noi dovremo aggiungere nel codice in questi helper (o subito prima di essi) che in caso di dati simbolici andrà ad eseguire le operazioni sullo stato simbolico. Gli helper di QEMU invece eseguiranno le operazioni concretamente.
-Vorrei capire quanto il tuo sottoinsieme è lontano dall'insieme gestito da QEMU con gli helper. Esempio: ne hai viste il 50%, 10% o 1%? 
-Chiramente potremmo fare lo stesso check rispetto il manuale Intel ma forse è più difficile e alla fine a noi interessa gestire le istruzioni che QEMU modella con gli helper.
-Tieni conto che prima o poi analizzeremo programmi che sono più complessi di quelli che hai considerato fino ad ora quindi sicuramente dovrai considerare altre istruzioni. 
-Non riuscirai a modellarle tutte ma se compilatore/QEMU ne scegli altre rispetto a quelle che hai considerato ora, dovrai aggiungerle necessariamente.
-
-OK
-
-
-
-Riguardo Z3, il prossimo step è avere una chiara idea di:
-1) come intendi rappresentare i registri x87 e SSE/XMM/etc.? Hai determinato il tipo Z3 corretto? Essendo i registri SSE/XMM/etc usati sia per floating-point andranno modellati in modo diverso a secondo della tipologia di dati vi è stata messa dentro.
-2) che operazioni Z3 intendi fare per gestire le varie istruzioni che hai identificato? Serve un mapping 1:1
-Occorre fare una tabella in cui dici: es. un registro x86 X, contiene in x86 Y bit, allora lo modello con un tipo Z3 creato con il sort Z con rounding mode Q, etc, se deve essere
-convertito ad intero (per via di istruzioni x86 che fanno lo conversione) allora userò questa operazione Z3, etc.
-
-
-
-
-Altro step da fare a breve è prendere mano con SymQEMU
-- installalo
-- esegui delle prime prove su programmi con operazioni intere su dati simbolici
-Guardati il paper di SymQEMU per farti un'idea più precisa su come funziona. Non ancora deciso se usare Fuzzolic o SymQEMU, ma visto che i concetti alla base sono simili, parti con SymQEMU.
-Parti da piccoli programmi che leggono da file un certo numero di byte, fanno qualche computazione e qualche branch su di essi. 
-SymQEMU in presenza di branch condition dovrebbe generarti gli input "alternativi" che visitano la direzione alternativa a quella presa dal path corrente.
-
-OK (?)
-
-
-
-
-
 
 
 
@@ -74,13 +19,17 @@ Estendere quindi il linguaggio, in modo da poter modellare le operazioni in FP e
 Definire nuove classi in expr.h, così che possa implementare nuovi metodi che poi definisco toZ3 e che si interfacciano quindi con le API di Z3.
 Inoltre, bisogna metter in ogni classe già presente un metodo che converge i dati da int a FP e viceversa
 
+
 Modificare, all'interno del runtime, come tradurre dal linguaggio di symCC a Z3
+
+Puoi prendere spunto su come modellare le cose guardando:
+- SymCC: https://github.com/eurecom-s3/symcc/blob/master/runtime/simple_backend/Runtime.cpp
+
+IMPORTANTE SE USO Z3_mk_context_rc!!!! (context with custom configuration)
+Ricordati sempre di incrementrare il contatore di referenziamento ogni volta che crei un oggetto, perché se lo diminuisci e va a 0 viene deallocato.
 
 
 N.B. Potrebbero esserci helper che gestiscono diverse istruzioni x86, quindi bisogna starci attento.
-
-
-Andare a rivedere nel manuale intel a cosa serve il fp_status
 
 
 Compilare il programma per dirgli di usare i registri XMM ma non quelli YMM o ZMM (Linux dovrebeb già fare tutto da solo)
