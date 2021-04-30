@@ -1,7 +1,7 @@
 Sempre nel volume 1 trovi tutto il capito 8 dedicato a x87. Il capitolo 9 copre MMX ed il 10 copre SSE. 
 Nota: nel volume 2 trovi la descrizione delle istruzioni come hai visto fino ad ora sui siti disponibili online.
 
-OK(?)
+OK
 
 
 
@@ -45,6 +45,12 @@ Una query minimale prevede la semplificazione della richiesta, magari guardando 
 Prima che symQEMU chiami l'helper associato ad una certa funzione devo aggiungere una call definita da me "sym_qualcosa(arg...)" e, per ogni call all'helper, devo aggiungere subito prima una call alla mia funzione che andrà a modificare lo stato simbolico dovuto all'esecuzione di una istruzione x87 o che fanno utilizzo di registri vettoriali.
 
 
+
+
+
+
+
+
 cpu.h -> Line 1148 struct CPUX86State
 
 - regs[CPU_NB_REGS]
@@ -60,10 +66,10 @@ Registro dei flag
 L'unita x87 funziona a stack
 
 - fpus
-Tocca vedere a cosa è riferito (forse status word?)
+Status word
 
 - fpuc
-Tocca vedere a cosa è riferito (forse control word?)
+Control word
 
 - fptags
 Tocca vedere bene cosa è, ma dovrebbe maninopolare i tags dei registri
