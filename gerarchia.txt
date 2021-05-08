@@ -1,0 +1,6 @@
+Classe AddExpr 		-> Estende LinearBinaryExpr
+Classe LinearBinaryExpr	-> Estende BinaryExpr
+Classe BinaryExpr		-> Estende NonCostantExpr
+Classe NonCostantExpr 		-> Estende Expr
+Classe Expr (fermarsi qui)	-> Estende DependencyNode
+Classe DependencyNode (radice)

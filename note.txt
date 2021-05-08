@@ -1,0 +1,14 @@
+expr_builder__gen.cpp -> La riga di createAdd che mi interessa sta a 684
+expr_builder__gen.cpp -> La riga di createAdd generata dallo script pyton sta a 1436 
+
+
+
+symQEMU invoca call sym_add_i64
+La funzione proviene da tcg-runtine-sym.c nel DEF_HELPER_BINARY (Line 84)
+Poi viene invocata SYM_HELPER_BINARY in tcg-op.h (Line 37) che genera l'helper simbolico vero e proprio
+(?)
+
+
+
+Le expr_builder dove stanno???
+Dove stanno nella catena di esecuzione???

@@ -25,9 +25,9 @@ Disassemblamento della sezione .text:
   40102d:	48 83 e4 f0          	and    rsp,0xfffffffffffffff0
   401031:	50                   	push   rax
   401032:	54                   	push   rsp
-  401033:	49 c7 c0 80 11 40 00 	mov    r8,0x401180
-  40103a:	48 c7 c1 10 11 40 00 	mov    rcx,0x401110
-  401041:	48 c7 c7 06 11 40 00 	mov    rdi,0x401106
+  401033:	49 c7 c0 f0 11 40 00 	mov    r8,0x4011f0
+  40103a:	48 c7 c1 80 11 40 00 	mov    rcx,0x401180
+  401041:	48 c7 c7 51 11 40 00 	mov    rdi,0x401151
   401048:	ff 15 a2 2f 00 00    	call   QWORD PTR [rip+0x2fa2]        # 403ff0 <__libc_start_main@GLIBC_2.2.5>
   40104e:	f4                   	hlt    
   40104f:	90                   	nop
@@ -93,57 +93,95 @@ Disassemblamento della sezione .text:
   401100:	f3 0f 1e fa          	endbr64 
   401104:	eb 8a                	jmp    401090 <register_tm_clones>
 
-0000000000401106 <main>:
+0000000000401106 <foo>:
   401106:	f3 0f 1e fa          	endbr64 
-  40110a:	b8 ff ff ff ff       	mov    eax,0xffffffff
-  40110f:	c3                   	ret    
+  40110a:	f3 0f 11 44 24 fc    	movss  DWORD PTR [rsp-0x4],xmm0
+  401110:	d9 44 24 fc          	fld    DWORD PTR [rsp-0x4]
+  401114:	f3 0f 11 4c 24 fc    	movss  DWORD PTR [rsp-0x4],xmm1
+  40111a:	d9 44 24 fc          	fld    DWORD PTR [rsp-0x4]
+  40111e:	d9 c9                	fxch   st(1)
+  401120:	b8 01 00 00 00       	mov    eax,0x1
+  401125:	db f1                	fcomi  st,st(1)
+  401127:	77 23                	ja     40114c <foo+0x46>
+  401129:	db e9                	fucomi st,st(1)
+  40112b:	7b 12                	jnp    40113f <foo+0x39>
+  40112d:	d9 c9                	fxch   st(1)
+  40112f:	eb 02                	jmp    401133 <foo+0x2d>
+  401131:	d9 c9                	fxch   st(1)
+  401133:	b8 ff ff ff ff       	mov    eax,0xffffffff
+  401138:	df f1                	fcomip st,st(1)
+  40113a:	dd d8                	fstp   st(0)
+  40113c:	77 12                	ja     401150 <foo+0x4a>
+  40113e:	c3                   	ret    
+  40113f:	75 f0                	jne    401131 <foo+0x2b>
+  401141:	dd d8                	fstp   st(0)
+  401143:	dd d8                	fstp   st(0)
+  401145:	b8 00 00 00 00       	mov    eax,0x0
+  40114a:	eb 04                	jmp    401150 <foo+0x4a>
+  40114c:	dd d8                	fstp   st(0)
+  40114e:	dd d8                	fstp   st(0)
+  401150:	c3                   	ret    
 
-0000000000401110 <__libc_csu_init>:
-  401110:	f3 0f 1e fa          	endbr64 
-  401114:	41 57                	push   r15
-  401116:	4c 8d 3d 33 2d 00 00 	lea    r15,[rip+0x2d33]        # 403e50 <__frame_dummy_init_array_entry>
-  40111d:	41 56                	push   r14
-  40111f:	49 89 d6             	mov    r14,rdx
-  401122:	41 55                	push   r13
-  401124:	49 89 f5             	mov    r13,rsi
-  401127:	41 54                	push   r12
-  401129:	41 89 fc             	mov    r12d,edi
-  40112c:	55                   	push   rbp
-  40112d:	48 8d 2d 24 2d 00 00 	lea    rbp,[rip+0x2d24]        # 403e58 <__do_global_dtors_aux_fini_array_entry>
-  401134:	53                   	push   rbx
-  401135:	4c 29 fd             	sub    rbp,r15
-  401138:	48 83 ec 08          	sub    rsp,0x8
-  40113c:	e8 bf fe ff ff       	call   401000 <_init>
-  401141:	48 c1 fd 03          	sar    rbp,0x3
-  401145:	74 1f                	je     401166 <__libc_csu_init+0x56>
-  401147:	31 db                	xor    ebx,ebx
-  401149:	0f 1f 80 00 00 00 00 	nop    DWORD PTR [rax+0x0]
-  401150:	4c 89 f2             	mov    rdx,r14
-  401153:	4c 89 ee             	mov    rsi,r13
-  401156:	44 89 e7             	mov    edi,r12d
-  401159:	41 ff 14 df          	call   QWORD PTR [r15+rbx*8]
-  40115d:	48 83 c3 01          	add    rbx,0x1
-  401161:	48 39 dd             	cmp    rbp,rbx
-  401164:	75 ea                	jne    401150 <__libc_csu_init+0x40>
-  401166:	48 83 c4 08          	add    rsp,0x8
-  40116a:	5b                   	pop    rbx
-  40116b:	5d                   	pop    rbp
-  40116c:	41 5c                	pop    r12
-  40116e:	41 5d                	pop    r13
-  401170:	41 5e                	pop    r14
-  401172:	41 5f                	pop    r15
-  401174:	c3                   	ret    
-  401175:	66 66 2e 0f 1f 84 00 	data16 nop WORD PTR cs:[rax+rax*1+0x0]
-  40117c:	00 00 00 00 
+0000000000401151 <main>:
+  401151:	f3 0f 1e fa          	endbr64 
+  401155:	48 83 ec 08          	sub    rsp,0x8
+  401159:	89 7c 24 04          	mov    DWORD PTR [rsp+0x4],edi
+  40115d:	db 44 24 04          	fild   DWORD PTR [rsp+0x4]
+  401161:	d9 5c 24 04          	fstp   DWORD PTR [rsp+0x4]
+  401165:	f3 0f 10 4c 24 04    	movss  xmm1,DWORD PTR [rsp+0x4]
+  40116b:	f3 0f 10 05 91 0e 00 	movss  xmm0,DWORD PTR [rip+0xe91]        # 402004 <_IO_stdin_used+0x4>
+  401172:	00 
+  401173:	e8 8e ff ff ff       	call   401106 <foo>
+  401178:	48 83 c4 08          	add    rsp,0x8
+  40117c:	c3                   	ret    
+  40117d:	0f 1f 00             	nop    DWORD PTR [rax]
 
-0000000000401180 <__libc_csu_fini>:
+0000000000401180 <__libc_csu_init>:
   401180:	f3 0f 1e fa          	endbr64 
-  401184:	c3                   	ret    
+  401184:	41 57                	push   r15
+  401186:	4c 8d 3d c3 2c 00 00 	lea    r15,[rip+0x2cc3]        # 403e50 <__frame_dummy_init_array_entry>
+  40118d:	41 56                	push   r14
+  40118f:	49 89 d6             	mov    r14,rdx
+  401192:	41 55                	push   r13
+  401194:	49 89 f5             	mov    r13,rsi
+  401197:	41 54                	push   r12
+  401199:	41 89 fc             	mov    r12d,edi
+  40119c:	55                   	push   rbp
+  40119d:	48 8d 2d b4 2c 00 00 	lea    rbp,[rip+0x2cb4]        # 403e58 <__do_global_dtors_aux_fini_array_entry>
+  4011a4:	53                   	push   rbx
+  4011a5:	4c 29 fd             	sub    rbp,r15
+  4011a8:	48 83 ec 08          	sub    rsp,0x8
+  4011ac:	e8 4f fe ff ff       	call   401000 <_init>
+  4011b1:	48 c1 fd 03          	sar    rbp,0x3
+  4011b5:	74 1f                	je     4011d6 <__libc_csu_init+0x56>
+  4011b7:	31 db                	xor    ebx,ebx
+  4011b9:	0f 1f 80 00 00 00 00 	nop    DWORD PTR [rax+0x0]
+  4011c0:	4c 89 f2             	mov    rdx,r14
+  4011c3:	4c 89 ee             	mov    rsi,r13
+  4011c6:	44 89 e7             	mov    edi,r12d
+  4011c9:	41 ff 14 df          	call   QWORD PTR [r15+rbx*8]
+  4011cd:	48 83 c3 01          	add    rbx,0x1
+  4011d1:	48 39 dd             	cmp    rbp,rbx
+  4011d4:	75 ea                	jne    4011c0 <__libc_csu_init+0x40>
+  4011d6:	48 83 c4 08          	add    rsp,0x8
+  4011da:	5b                   	pop    rbx
+  4011db:	5d                   	pop    rbp
+  4011dc:	41 5c                	pop    r12
+  4011de:	41 5d                	pop    r13
+  4011e0:	41 5e                	pop    r14
+  4011e2:	41 5f                	pop    r15
+  4011e4:	c3                   	ret    
+  4011e5:	66 66 2e 0f 1f 84 00 	data16 nop WORD PTR cs:[rax+rax*1+0x0]
+  4011ec:	00 00 00 00 
+
+00000000004011f0 <__libc_csu_fini>:
+  4011f0:	f3 0f 1e fa          	endbr64 
+  4011f4:	c3                   	ret    
 
 Disassemblamento della sezione .fini:
 
-0000000000401188 <_fini>:
-  401188:	f3 0f 1e fa          	endbr64 
-  40118c:	48 83 ec 08          	sub    rsp,0x8
-  401190:	48 83 c4 08          	add    rsp,0x8
-  401194:	c3                   	ret    
+00000000004011f8 <_fini>:
+  4011f8:	f3 0f 1e fa          	endbr64 
+  4011fc:	48 83 ec 08          	sub    rsp,0x8
+  401200:	48 83 c4 08          	add    rsp,0x8
+  401204:	c3                   	ret    

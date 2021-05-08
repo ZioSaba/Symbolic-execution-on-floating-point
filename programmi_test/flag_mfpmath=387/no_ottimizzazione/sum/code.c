@@ -8,7 +8,7 @@ float foo (float a){
 }
 
 void main (){
-    float a = 10.0;
+    long double a = 10.0;
     float res = foo(a);
     printf("%f \n", res);
     return;    

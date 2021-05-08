@@ -12,9 +12,9 @@ La definizione dell'helper associato alla ADD si trova alla riga 105.
 
 
 tcg-op.h
-Contiene il metodo che consente di costruire le chiamata TCG agli helper, ovvero la macro SYM_HELPER_BINARY_64 (Line 42)
+Contiene il metodo che consente di costruire la chiamata TCG agli helper, ovvero la macro SYM_HELPER_BINARY_64 (Line 42)
 
-Supponiamo che per modellare simbolicamente la add (a tempo runtime) vogliamo che venga invocata una funzione da noi scritta chiamata pippo(), cioè la funzione che andrà costrire l'espressione nel linguaggio di QSYM che, a sua volta,
+Supponiamo che per modellare simbolicamente la add (a tempo runtime) vogliamo che venga invocata una funzione da noi scritta chiamata pippo(), cioè la funzione che andrà costruire l'espressione nel linguaggio di QSYM che, a sua volta,
 andrà ad invocare i metodi della libreria Z3.
 Per fare questo ho bisogno di un metodo che indichi a QEMU di aggiungere nel TCG una call all'helper che ci interessa venga eseguito.
 Questa è la sola definizione dell'helper, il corpo viene definito in tcg-runtime-sym.c
@@ -30,9 +30,9 @@ RuntimeCommon.h
 Contiene la dichiarazione di tutti i metodi, compresi alcuni float, e che contiene metodi utilizzabili sia dal Runtime-Simple di SymCC che da quello di QSYM.
 
 
-Runtime.cpp
+Runtime.cpp del backend QSYM
 Contiene la definizione di quei metodi che non si trovano nel RuntimeCommon.h, quindi che non vanno bene per entrambi i Runtime.
-La definizione de builder dell'esperssione simbolica si trova a riga 231, ed è definito tramite una macro DEF_BINAYR_EXPR_BUILDER, che invoca i metodi del Builder
+La definizione de builder dell'esperssione simbolica si trova a riga 227, ed è definito tramite una macro DEF_BINAYR_EXPR_BUILDER, che invoca i metodi del Builder
 
 
 SYMQEMU (basta rilanciare il make)

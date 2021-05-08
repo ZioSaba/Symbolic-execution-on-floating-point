@@ -1,0 +1,33 @@
+Si parte da tcg-op.h
+
+Viene definita la funzione "static inline void tcg_gen_add_i64" (Line 651), che prende come parametri:
+- un integer 64 bit in cui memorizzare il risultato
+- due integer 64 bit che sono i due addendi
+
+Questi tipi integer si chiamano TCGv_i64 e sono definiti nel file tcg.h (Line 460 e spiegazione sopra).
+La funzione "tcg_gen_add_i64" invoca la macro SYM_HELPER_BINARY_64 che inserisce nella lista di call che QEMU può effettuare il riferimento ad un helper gerato per supportare l'esecuzione di sym_add_i64.
+Quindi viene invocata la funzione "static inline void tcg_gen_op3_i64", che prende come parametri:
+- l'opcode TCG associato a tale operazione (non riesco a capire cosa sia: parte in tcg-opc.h Line 129 e la macro DEF va in tcg.h Line 211) (come la implemento io questa parte?)
+- un integer 64 bit in cui memorizzare il risultato
+- due integer 64 bit che sono i due addendi
+
+
+
+Una volta fatto tutto questo, bisogna andare a definire il corpo dell'helper all'interno di tcg-runtime-sym.c
+Alla riga 105 viene definito l'helper binario della add tramite la macro DEF_HELPER_BINARY.
+Tale macro prende due parametri:
+- il nome dell'operazione per SymCC
+- il nome dell'operazione per QEMU
+
+All'interno di tale macro avvengono le seguenti operazioni:
+- invoca una macro chiamata DECL_HELPER_BINARY
+    * Tale macro prende come input il nome dell'operazione per QEMU e scrive il prototipo di due funzioni, una chiamata "helper_sym_add_i32" e l'altra "helper_sym_add_i64", entrambe che prendono i medesimi argomenti
+    * Quindi viene invocata un'ulteriore macro chiamata HELPER_ENSURE_EXPRESSIONS, che verifica che ci sia almeno un parametro simbolico al momento dell'invocazione
+    * Se la macro precedente non fa scattare nessuna assert, quindi c'è necessità di costruire un'espressione simbolica, viene creata "_sym_build_add"
+
+
+Ora si passa alla defizione vera e propria del builder dell'espressione simbolica.
+Innanzitutto il builder deve avere l'intestazione definita nel backend di SymCC in RuntimeCommon.h, un file contenente tutti i builder  supportati sia dal backend "simple" che da quello di QSYM (poiché però io sto lavorando con QSYM, dovrò definirli nel Runtime di QSYM).
+L'oggetto "_sym_build_add", che è di tipo SymExpr, è poi definito all'interno di Runtime.cpp Line 227 (QSYM-backend) tramite una macro denominata DEF_BINAYR_EXPR_BUILDER.
+Tale macro prende il contesto globale e invoca il metodo createAdd nel file expr_builder.cpp Line 684-772 (di cui l'intestazione è definita in expr_builder.h Line 252).
+La somma creata viene valutata a seconda se gli argomenti sono simbolici o meno
