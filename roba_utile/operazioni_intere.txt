@@ -1,0 +1,2 @@
+Le classi intere ragionano in termini di byte.
+Quando viene a crearsi un'espressione simbolica, quell'espressione lavora con dati che sono di 1 byte (8 bit) per volta e che poi vengono concatenati per formare il bv finale.
