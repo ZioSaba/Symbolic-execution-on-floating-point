@@ -31,5 +31,3 @@ Innanzitutto il builder deve avere l'intestazione definita nel backend di SymCC 
 L'oggetto "_sym_build_add", che è di tipo SymExpr, è poi definito all'interno di Runtime.cpp Line 227 (QSYM-backend) tramite una macro denominata DEF_BINAYR_EXPR_BUILDER.
 Tale macro prende il contesto globale e invoca il metodo createAdd nel file expr_builder.cpp Line 684-772 (di cui l'intestazione è definita in expr_builder.h Line 252).
 La somma creata viene valutata a seconda se gli argomenti sono simbolici o meno.
-
-Da qui, la createAdd va in expr_builder__gen.cpp (Line 1437) ????
