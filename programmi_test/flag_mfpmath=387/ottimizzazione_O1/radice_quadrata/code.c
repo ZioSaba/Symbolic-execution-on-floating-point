@@ -7,8 +7,8 @@ double foo (double a){
     return res;
 }
 
-void main (){
-    double a = 16.0;
+void main (int argc, char* argv[]){
+    double a = argc;
     printf("%lf\n", foo(a));
     return;    
 }

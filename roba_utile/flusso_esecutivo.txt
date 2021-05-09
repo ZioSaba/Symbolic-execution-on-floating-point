@@ -30,4 +30,6 @@ Ora si passa alla defizione vera e propria del builder dell'espressione simbolic
 Innanzitutto il builder deve avere l'intestazione definita nel backend di SymCC in RuntimeCommon.h, un file contenente tutti i builder  supportati sia dal backend "simple" che da quello di QSYM (poiché però io sto lavorando con QSYM, dovrò definirli nel Runtime di QSYM).
 L'oggetto "_sym_build_add", che è di tipo SymExpr, è poi definito all'interno di Runtime.cpp Line 227 (QSYM-backend) tramite una macro denominata DEF_BINAYR_EXPR_BUILDER.
 Tale macro prende il contesto globale e invoca il metodo createAdd nel file expr_builder.cpp Line 684-772 (di cui l'intestazione è definita in expr_builder.h Line 252).
-La somma creata viene valutata a seconda se gli argomenti sono simbolici o meno
+La somma creata viene valutata a seconda se gli argomenti sono simbolici o meno.
+
+Da qui, la createAdd va in expr_builder__gen.cpp (Line 1437) ????
