@@ -24,5 +24,8 @@ Dove definire le classi:
 Dato che la add che si vuole implementare è un'operazione binaria, si potrebbe partire da Binary_Expr e definire le due sottoclassi.
 Poiché poi le classi Linear e NonLinear di fatto non portano alcuna informazione utile, si potrebbero eliminare (?) e far estendere a tutte le operazioni intere direttamente Integer_Operation, e così analogamente per quelle in floating point.
 
-Altrimenti, un'altra soluzione potrebbe essere modificare le classi Linear e NonLinear, aggiungendovi all'interno le due sottoclassi (ovviamente con nome diverso in modo che non ci sia overload).
+Altrimenti, un'altra soluzione potrebbe essere modificare le classi Linear e NonLinear, aggiungendovi all'interno le due sottoclassi (ovviamente con nome diverso in modo che non ci sia overload tra quelle che estendo Linear e quelle che estendono NonLinear).
 Questa soluzione modifica le classi nel punto più basso possibile, il che può essere comodo per avere una distinzione più netta anziché nel punto più alto della gerarchia.
+
+
+Non credo che andare al di sopra di Binary_Expr possa essere una soluzione utile, dato che tale classe e tutte quelle soprastanti contengono metodi di uso generale, a meno che non potrebbe essere necessario riscrivere anche quelle operazioni per i FP.
