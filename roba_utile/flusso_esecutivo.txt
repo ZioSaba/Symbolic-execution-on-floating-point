@@ -7,9 +7,11 @@ Viene definita la funzione "static inline void tcg_gen_add_i64" (Line 651), che 
 Questi tipi integer si chiamano TCGv_i64 e sono definiti nel file tcg.h (Line 460 e spiegazione sopra).
 La funzione "tcg_gen_add_i64" invoca la macro SYM_HELPER_BINARY_64 che inserisce nella lista di call che QEMU può effettuare il riferimento ad un helper gerato per supportare l'esecuzione di sym_add_i64.
 Quindi viene invocata la funzione "static inline void tcg_gen_op3_i64", che prende come parametri:
-- l'opcode TCG associato a tale operazione (non riesco a capire cosa sia: parte in tcg-opc.h Line 129 e la macro DEF va in tcg.h Line 211) (cosa sta facendo e come la implemento io questa parte?)
+- l'opcode TCG associato a tale operazione (parte in tcg-opc.h Line 129 e la macro DEF va in tcg.h Line 211)
 - un integer 64 bit in cui memorizzare il risultato
 - due integer 64 bit che sono i due addendi
+
+IN TEORIA A ME BASTA INVOCARE SYM_HELPER_BINARY_64 E BASTA!!!
 
 
 
