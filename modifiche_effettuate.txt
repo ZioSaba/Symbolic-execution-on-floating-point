@@ -1,9 +1,36 @@
-tcg-op.h (ok)
-Riga 705: aggiunta della funzione che genera l'helper
+SYMQEMU
+
+1) tcg-op.h (ok)
+Riga 705: aggiunta della funzione che invoca la macro che collega l'helper alla funzione simbolica sym_FloatingPointAdd
 
 
-tcg-runtime-sym.h (ok)
-Riga 51: dichiarazione dell'helper della nuova funzione FloatingPointAdd
+2) tcg-runtime-sym.h (ok)
+Riga 51: dichiarazione dell'helper della nuova funzione FloatingPointAdd (risolve implicit declaration in (1) )
+
+
+3) tcg-runtime-sym.c (ok)
+Riga 119: creazione dell'helper associato alla funzione FloatingPointAdd
+
+
+4) tcg-runtime-sym.h (ok)
+Riga 52: creazione dell'helper simbolico sym_FloatingPointAdd (risolve implicit declaration in (3) )
+
+
+
+SYMCC
+
+5) RuntimeCommon.h
+Riga 67: dichiarazione del prototipo del costruttore simbolico della FloatingPointAdd
+
+
+6) Runtime.cpp (qsym backend)
+Riga 236: definizione del builder simbolico e invocazione dei metodi delle classi
+
+
+7) expr_builder.h
+Riga 27: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd
+
+
 
 
 expr.h (in corso...)
