@@ -1,0 +1,15 @@
+tcg-op.h (ok)
+Riga 705: aggiunta della funzione che genera l'helper
+
+
+tcg-runtime-sym.h (ok)
+Riga 51: dichiarazione dell'helper della nuova funzione FloatingPointAdd
+
+
+expr.h (in corso...)
+Riga 448: ho iniziato a definire le nuove classi
+Riga 832: modifiche della AddExpr intera
+Riga 856: modifiche della SubExpr intera
+Riga 880: modifiche della MulExpr intera
+Riga 903: modifiche della UDivExpr intera
+Riga 927: modifiche della SDivExpr intera

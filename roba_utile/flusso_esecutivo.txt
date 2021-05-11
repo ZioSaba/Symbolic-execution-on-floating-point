@@ -5,7 +5,7 @@ Viene definita la funzione "static inline void tcg_gen_add_i64" (Line 651), che 
 - due integer 64 bit che sono i due addendi
 
 Questi tipi integer si chiamano TCGv_i64 e sono definiti nel file tcg.h (Line 460 e spiegazione sopra).
-La funzione "tcg_gen_add_i64" invoca la macro SYM_HELPER_BINARY_64 che inserisce nella lista di call che QEMU può effettuare il riferimento ad un helper gerato per supportare l'esecuzione di sym_add_i64.
+La funzione "tcg_gen_add_i64" invoca la macro SYM_HELPER_BINARY_64 che inserisce nella lista di call che QEMU può effettuare il riferimento ad un helper generato per supportare l'esecuzione di sym_add_i64.
 Quindi viene invocata la funzione "static inline void tcg_gen_op3_i64", che prende come parametri:
 - l'opcode TCG associato a tale operazione (parte in tcg-opc.h Line 129 e la macro DEF va in tcg.h Line 211)
 - un integer 64 bit in cui memorizzare il risultato
@@ -29,7 +29,7 @@ All'interno di tale macro avvengono le seguenti operazioni:
 
 
 Ora si passa alla defizione vera e propria del builder dell'espressione simbolica.
-Innanzitutto il builder deve avere l'intestazione definita nel backend di SymCC in RuntimeCommon.h, un file contenente tutti i builder  supportati sia dal backend "simple" che da quello di QSYM (poiché però io sto lavorando con QSYM, dovrò definirli nel Runtime di QSYM).
+Il builder deve avere l'intestazione definita nel backend di SymCC in RuntimeCommon.h, un file contenente i builder supportati da entrambi i backend (poiché però io sto lavorando con QSYM, probabilmente dovrò definirli nel Runtime di QSYM).
 L'oggetto "_sym_build_add", che è di tipo SymExpr, è poi definito all'interno di Runtime.cpp Line 227 (QSYM-backend) tramite una macro denominata DEF_BINAYR_EXPR_BUILDER.
 Tale macro prende il contesto globale e invoca il metodo createAdd nel file expr_builder.cpp Line 684-772 (di cui l'intestazione è definita in expr_builder.h Line 252).
 La somma creata viene valutata a seconda se gli argomenti sono simbolici o meno.
