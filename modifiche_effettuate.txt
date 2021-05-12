@@ -5,30 +5,27 @@ Riga 705: aggiunta della funzione che invoca la macro che collega l'helper alla 
 
 
 2) tcg-runtime-sym.h (ok)
-Riga 51: dichiarazione dell'helper della nuova funzione FloatingPointAdd (risolve implicit declaration in (1) )
+Riga 51: dichiarazione dell'helper della nuova funzione FloatingPointAdd (risolve "implicit declaration" per (1) )
 
 
 3) tcg-runtime-sym.c (ok)
 Riga 119: creazione dell'helper associato alla funzione FloatingPointAdd
 
 
-4) tcg-runtime-sym.h (ok)
-Riga 52: creazione dell'helper simbolico sym_FloatingPointAdd (risolve implicit declaration in (3) )
-
 
 
 SYMCC
 
-5) RuntimeCommon.h
+4) RuntimeCommon.h
 Riga 67: dichiarazione del prototipo del costruttore simbolico della FloatingPointAdd
 
 
-6) Runtime.cpp (qsym backend)
-Riga 236: definizione del builder simbolico e invocazione dei metodi delle classi
+5) Runtime.cpp (qsym backend)
+Riga 236: definizione del builder simbolico e invocazione dei metodi delle classi (risolve "undefined reference" per (4) )
 
 
-7) expr_builder.h
-Riga 27: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd
+6) expr_builder.h
+Riga 27: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd (risolve "no member added in class" per (5) )
 
 
 

@@ -37,7 +37,7 @@ La definizione de builder dell'esperssione simbolica si trova a riga 227, ed è 
 
 SYMQEMU (basta rilanciare il make)
 1) Modificare il codice in modo da generare la call all'helper e metterla dentro al codice TCG.		(tcg-op.h)
-2) Definire ill generatore dell'helper, che deve aggiungere al codice TCG esistente una call all'helper simbolico della funzione	(tcg-op.h / tcg-runtime-sym.c)
+2) Definire il generatore dell'helper, che deve aggiungere al codice TCG esistente una call all'helper simbolico della funzione	(tcg-op.h / tcg-runtime-sym.c)
 3) Dichiarare e definire l'helper stesso: deve verificare che almeno uno degli operandi sia simbolico e, se ciò è verificato, invoca un metodo del runtime che sarà il builder simbolico (tcg-runtime-sym.c)
 
 
