@@ -24,8 +24,13 @@ Riga 67: dichiarazione del prototipo del costruttore simbolico della FloatingPoi
 Riga 236: definizione del builder simbolico e invocazione dei metodi delle classi (risolve "undefined reference" per (4) )
 
 
+
+QSYM
 6) expr_builder.h
-Riga 27: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd (risolve "no member added in class" per (5) )
+Riga 27: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd nella classe ExprBuilder (risolve "no member added in class" per (5) )
+
+
+Tocca risolvere undefined reference in 6
 
 
 

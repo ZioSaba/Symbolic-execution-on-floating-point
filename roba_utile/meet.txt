@@ -42,7 +42,7 @@ SYMQEMU (basta rilanciare il make)
 
 
 SYMCC con backend QSYM
-4) Dichiarare il builder simbolico (RuntimeCommon.cpp)
+4) Dichiarare il builder simbolico (RuntimeCommon.h)
 5) Definire il corpo del builder, dove vengono invocati i metodi del builder di QSYM per cosstruire espressioni nel linguaggio QSYM (Runtime.cpp)
 
 
