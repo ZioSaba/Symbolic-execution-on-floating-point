@@ -1,0 +1,3 @@
+Optimistic
+Quando arriva su un branch viene fatta una query sul solver, che però spesso non è in grado di soddisfare la query totalmente o comunque nel tempo massimo consentito, per provare a generare altri input utili prova quindi a generare un query minimale.
+Una query minimale prevede la semplificazione della richiesta, magari guardando ad esempio solo la seconda parte di una richiesta, ma sono ottimisti che fornendo come soluzione il necessario per risolvere l'ultimo controllo potrebbe comunque esplorare parti interessanti del codice

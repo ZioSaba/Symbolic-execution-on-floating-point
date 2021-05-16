@@ -2,10 +2,10 @@ dir_command=/home/zio-saba/Scrivania/symqemu_originale/BUILD/x86_64-linux-user/s
 dir_test=/home/zio-saba/Scrivania/progetto_laurea/symQEMU/
 dir_res=/home/zio-saba/Scrivania/progetto_laurea/symQEMU/risultati/
 flag= -d in_asm,op_opt
-path_programma="/home/zio-saba/Scrivania/progetto_laurea/programmi_test/prova_add/test"
+path_programma="/home/zio-saba/Scrivania/progetto_laurea/programmi_test/float/no_ottimizzazione/sum/test"
 
-#run_ext:
-#	SYMCC_OUTPUT_DIR=./risultati  $(dir_command) $(flag) $(path_programma)
+run_ext:
+	SYMCC_OUTPUT_DIR=./risultati  $(dir_command) $(flag) $(path_programma)
 
 run: test
 	SYMCC_OUTPUT_DIR=$(dir_res) \

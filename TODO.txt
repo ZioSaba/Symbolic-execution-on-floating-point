@@ -1,85 +1,74 @@
-Sempre nel volume 1 trovi tutto il capito 8 dedicato a x87. Il capitolo 9 copre MMX ed il 10 copre SSE. 
-Nota: nel volume 2 trovi la descrizione delle istruzioni come hai visto fino ad ora sui siti disponibili online.
+Una cosa su cui però ho un dubbio, che sicuramente è un errore che ho fatto io da qualche parte ma che non riesco ad identificare, è dove mettere il "linking" diciamo tra l'istruzione fadd e la mia funzione simbolica FloatingPointAdd, in modo che symQEMU sa che alla fadd è legato il mio helper_FloatingPointAdd
 
-OK
+Se non sbaglio fadd è un istruzione x87. Se non sbaglio abbiamo detto di concentrarci prima sulla parte floating fatta su registri XMM/SSE: non dovresti puntare alla addss ad esempio?  O i tuoi esempi che non forzano uso di x87 comunque usano fadd?
 
+Nella tua tabella non hai indicato dove si trovano molti degli helper SSE. Mi sembra la prima cosa da fare se devi gestirli. 
+Ad esempio per la addss, guarda qui. (ops_sse.h Line 591)
 
+In questo momento devi sapere capire dove:
+1) si trovano tutti gli helper QEMU
+2) dove vengono invocate le gen_helper relative a questi helper
+Questo per tutti gli helper usati in una tua funzione che ad esempio: (1) prende un intero, (2) fa cast a float o double, (3) ci somma un altro valore, (4) fa un if/else sul risultato. 
 
+Da quello che vedo alcuni gen_helper per SSE sono indicizzati in una tabella: questa la entry per addss. (translate.c Line 2757, sempre in target/i386)
+Usando byte dell'attuale istruzione SSE, QEMU accede alla entry della tabella (translate.c Line 3059), recuperando puntatore alla funzione gen_helper_XXX di interesse e la invoca (per addss credo lo faccia qui -> translate.c Line 4475). 
 
-PROSSIME COSE DA FARE!
-
-Aggiustare gli helper tipo mettendoci 'printf("pippo\n");' per essere sicuro che quell'helper viene effettivamente invocato da QEMU al momento dell'esecuzione del codice, eventualmente segnandomi in giallo quelle che magari non vengono effettivamente invocate e che quindi non sono di nostro interesse (screma la tabella e riduci il lavoro).
-Aggiungi una colonna di tabella ad ogni istruzione.
-Studiare bene se una certa funzione può o meno essere modellata con Z3, non è detto che al momento ci sia il supporto necessario per farlo, o magari le modellano in modo sbagliato.
-Lanciarli singolarmente con symQEMU e vedere quali helper chiama, creare quindi l'helper che manipola lo stato simbolico.
-In parallelo, studiare come modificare il linguaggio che utilizza a runtime symCC, capire come modificare la gerarchia, dove aggiungere o meno le cose e perché.
-
-Parto da cose semplici, ovvero le 4 operazioni aritmetiche e le conversioni semplici, e capire come gestire simbolicamente tali operazioni.
-Estendere quindi il linguaggio, in modo da poter modellare le operazioni in FP e le conversioni.
-Definire nuove classi in expr.h, così che possa implementare nuovi metodi che poi definisco toZ3 e che si interfacciano quindi con le API di Z3.
-Inoltre, bisogna metter in ogni classe già presente un metodo che converge i dati da int a FP e viceversa
+Tieni conto che per ora per le prime prove potresti anche solo avere degli helper che internamento fanno solo una "printf("ESEGUITA\n")". In questo modo puoi fare prove indipendentemente da SymQEMU/SymCC/QSYM.
+Successivamente dentro l'helper andrai ad invocare funzioni del runtime di SymQEMU.
 
 
-Modificare, all'interno del runtime, come tradurre dal linguaggio di symCC a Z3
-
-Puoi prendere spunto su come modellare le cose guardando:
-- SymCC: https://github.com/eurecom-s3/symcc/blob/master/runtime/simple_backend/Runtime.cpp
-
-IMPORTANTE SE USO Z3_mk_context_rc!!!! (context with custom configuration)
-Ricordati sempre di incrementrare il contatore di referenziamento ogni volta che crei un oggetto, perché se lo diminuisci e va a 0 viene deallocato.
 
 
-N.B. Potrebbero esserci helper che gestiscono diverse istruzioni x86, quindi bisogna starci attento.
+Quindi ti funziona se lanci i comandi manualmente ma non se li metti nel Makefile?
+Prova con una script bash che esegue i comandi che davi manualmente.
+Se usi  SYMCC_INPUT_FILE, il tuo programma deve leggere da file e non da stdin.
 
 
-Compilare il programma per dirgli di usare i registri XMM ma non quelli YMM o ZMM (Linux dovrebeb già fare tutto da solo)
 
 
-Modifica gli esempi di symQEMU in cui l'input è un file, facendo una tokenizzazione su un qualche simbolo che so divide i vari input (fare un mini-parser)
-
-
-Optimistic
-Quando arriva su un branch viene fatta una query sul solver, che però spesso non è in grado di soddisfare la query totalmente o comunque nel tempo massimo consentito, per provare a generare altri input utili prova quindi a generare un query minimale.
-Una query minimale prevede la semplificazione della richiesta, magari guardando ad esempio solo la seconda parte di una richiesta, ma sono ottimisti che fornendo come soluzione il necessario per risolvere l'ultimo controllo potrebbe comunque esplorare parti interessanti del codice
-
-Prima che symQEMU chiami l'helper associato ad una certa funzione devo aggiungere una call definita da me "sym_qualcosa(arg...)" e, per ogni call all'helper, devo aggiungere subito prima una call alla mia funzione che andrà a modificare lo stato simbolico dovuto all'esecuzione di una istruzione x87 o che fanno utilizzo di registri vettoriali.
+Riguardo le modifiche che hai proposto per la gerarchie delle classi di QSYM:
+- servirebbe avere una struttura ad albero (una figura) delle classi attuali almeno per i primi K livelli della gerarchia altrimenti mi è difficile capire l'impatto delle tue modifiche
+- non andrei ad eliminare classi esistenti per motivi di compatibilità
+- i nomi delle classi che aggiunti devono usare la stessa convenzione sul formato dei nomi (non è Binary_Expr ma BinaryExpr)
+- i nomi che proponi sono tra loro inconsistenti: IntegerOperation vs FloatingPoint (forse dovrebbe essere FloatingPointOperation?)
+- QSYM mette se non sbaglio "Expr" nei nomi delle classi: forse quindi IntegerExpr e FloatingPointExpr?
+- fai attenzione: non puoi considerare solo BinaryExpr nei tuoi ragionamenti! Come modelli una UnaryExpr e le altre classi? E' vero che tu non andrai a creare lato SYMQEMU tutte e possibili classi ma le devi prevdere! Altrimenti quello che fai andrà rifatto da zero quando lo si vuole estendere ad altre istruzioni diverse da add/cmp/etc che tu consideri. Forse quindi BinaryExpr (così come UnaryExpr) dovranno essere sottoclassi di IntegerOperation/FloatingPoint. Come detto però serve avere una visione d'insieme sulla gerarchia.
 
 
 
 
 
 
+Tu hai dichiarato dei metodi di alcune classi senza però implementarli. Credo che tu debba implementarli in:
+
+https://github.com/ZioSaba/symcc/blob/master/runtime/qsym_backend/qsym/qsym/pintool/codegen/expr_builder.cpp
+
+Questo file viene se non sbaglio letto da gen_expr_builder.py, che vi aggiunge ulteriore codice, e lo salva in ../expr_builder__gen.cpp. Se tu aggiungi codice corretto in expr_builder.cpp, lo script python dovrebbe ricopiarlo senza toccarlo. 
+Tuttavia non sono sicuro al 100% quindi verifica. La cosa migliore è capire quello che fa gen_expr_builder.py.
+
+Probabilmente devi aggiungere altri pezzi dentro al file.h. Se vedi, lui va a definire una serie di cose nel file .h legate alla "add" e probabilmente lo script se le aspetta anche per il tuo nuovo kind. 
 
 
-cpu.h -> Line 1148 struct CPUX86State
 
-- regs[CPU_NB_REGS]
-Array che va a modellare tutti i registri x86
 
-- eip
-Program counter della VirtualCPU
+Per il fatto che sei dovuto ripartire da zero, non ti so dire il perchè ma mi sembra strano che non ci sia modo di modificare il tutto senza dover ogni volta partire da zero.  
+L'unico modo per capire le cose in queste situazioni è debuggarle (cme funziona il sistema di build?). Non ci sono scorciatoie.
 
--eflags
-Registro dei flag
+Quando hai un problema la prima domanda che ti devi fare: come si debugga questo problema? Posso fare ulteriore prove per capire dove è il problema?
+Ad esempio, hai verificato che la variabile SYMCC_OUTPUT è definita correttamente se esegui un comando dopo la pipe? 
+Hai provato a settare la variabile con "export VAR=1; comando1 | comando2" ?
+Il problema non è legato a SymQEMU.
 
-- fpstt
-L'unita x87 funziona a stack
+Prova e se non funziona fai debugging: chi è che stampa "Cannot open a file"? Se è SymQEMU, dove lo fa? perchè lo fa? il tuo "a priori" su cosa si basa? 
 
-- fpus
-Status word
+Ti assicuro che il tuo programma deve leggere da file se usi SYMCC_INPUT_FILE. Ad esempio:
 
-- fpuc
-Control word
+SYMCC_INPUT_FILE=`pwd`/test.dat SYMCC_OUTPUT_DIR=`pwd`/out ../x86_64-linux-user/symqemu-x86_64 ./main `pwd`/test.dat
 
-- fptags
-Tocca vedere bene cosa è, ma dovrebbe maninopolare i tags dei registri
+Dove "main" prendo un command-line argument che è il path al file, su cui fa fopen/fread/flose.
 
-- fpregs
-Modella i registri da ST(0) a ST(8).
-FPreg è una union, cioè una struct che ha un campo che può essere interpreteto in molteplici modi, in questo caso viene gestito come un floatx80 oppure come un'altra union che decide come suddividere i 128 bit che costituiscono i registri ST(i)
 
-- xmm_regs
-Modella i classici registri x86 XMM
 
-- opmask_regs[NB_OPMASK_REGS]
-Potrebbe mascherare le eccezioni create dai registri in seguito al dato che contengono, ma tocca vedere gli helper cosa fanno o non fanno
+
+
+
