@@ -26,16 +26,6 @@ Se usi  SYMCC_INPUT_FILE, il tuo programma deve leggere da file e non da stdin.
 
 
 
-Riguardo le modifiche che hai proposto per la gerarchie delle classi di QSYM:
-- servirebbe avere una struttura ad albero (una figura) delle classi attuali almeno per i primi K livelli della gerarchia altrimenti mi è difficile capire l'impatto delle tue modifiche
-- non andrei ad eliminare classi esistenti per motivi di compatibilità
-- i nomi delle classi che aggiunti devono usare la stessa convenzione sul formato dei nomi (non è Binary_Expr ma BinaryExpr)
-- i nomi che proponi sono tra loro inconsistenti: IntegerOperation vs FloatingPoint (forse dovrebbe essere FloatingPointOperation?)
-- QSYM mette se non sbaglio "Expr" nei nomi delle classi: forse quindi IntegerExpr e FloatingPointExpr?
-- fai attenzione: non puoi considerare solo BinaryExpr nei tuoi ragionamenti! Come modelli una UnaryExpr e le altre classi? E' vero che tu non andrai a creare lato SYMQEMU tutte e possibili classi ma le devi prevdere! Altrimenti quello che fai andrà rifatto da zero quando lo si vuole estendere ad altre istruzioni diverse da add/cmp/etc che tu consideri. Forse quindi BinaryExpr (così come UnaryExpr) dovranno essere sottoclassi di IntegerOperation/FloatingPoint. Come detto però serve avere una visione d'insieme sulla gerarchia.
-
-
-
 
 
 
@@ -53,22 +43,3 @@ Probabilmente devi aggiungere altri pezzi dentro al file.h. Se vedi, lui va a de
 
 Per il fatto che sei dovuto ripartire da zero, non ti so dire il perchè ma mi sembra strano che non ci sia modo di modificare il tutto senza dover ogni volta partire da zero.  
 L'unico modo per capire le cose in queste situazioni è debuggarle (cme funziona il sistema di build?). Non ci sono scorciatoie.
-
-Quando hai un problema la prima domanda che ti devi fare: come si debugga questo problema? Posso fare ulteriore prove per capire dove è il problema?
-Ad esempio, hai verificato che la variabile SYMCC_OUTPUT è definita correttamente se esegui un comando dopo la pipe? 
-Hai provato a settare la variabile con "export VAR=1; comando1 | comando2" ?
-Il problema non è legato a SymQEMU.
-
-Prova e se non funziona fai debugging: chi è che stampa "Cannot open a file"? Se è SymQEMU, dove lo fa? perchè lo fa? il tuo "a priori" su cosa si basa? 
-
-Ti assicuro che il tuo programma deve leggere da file se usi SYMCC_INPUT_FILE. Ad esempio:
-
-SYMCC_INPUT_FILE=`pwd`/test.dat SYMCC_OUTPUT_DIR=`pwd`/out ../x86_64-linux-user/symqemu-x86_64 ./main `pwd`/test.dat
-
-Dove "main" prendo un command-line argument che è il path al file, su cui fa fopen/fread/flose.
-
-
-
-
-
-

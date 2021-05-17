@@ -30,6 +30,11 @@ QSYM
 Riga 27: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd nella classe ExprBuilder (risolve "no member added in class" per (5) )
 
 
+7) gen_expr_builder.py
+Riga 45: aggiunta della nuova funzione FloatingPointAdd in createBinaryExpr
+Riga 160: aggiunta della nuova funzione FloatingPointAdd in ConstantFoldingExpr
+
+
 Tocca risolvere undefined reference in 6
 
 

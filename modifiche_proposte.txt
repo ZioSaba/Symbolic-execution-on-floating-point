@@ -29,3 +29,21 @@ Questa soluzione modifica le classi nel punto più basso possibile, il che può 
 
 
 Non credo che andare al di sopra di Binary_Expr possa essere una soluzione utile, dato che tale classe e tutte quelle soprastanti contengono metodi di uso generale, a meno che non potrebbe essere necessario riscrivere anche quelle operazioni per i FP.
+
+
+
+
+
+
+PROF:
+
+
+Riguardo le modifiche che hai proposto per la gerarchie delle classi di QSYM:
+- servirebbe avere una struttura ad albero (una figura) delle classi attuali almeno per i primi K livelli della gerarchia altrimenti mi è difficile capire l'impatto delle tue modifiche
+- non andrei ad eliminare classi esistenti per motivi di compatibilità
+- i nomi delle classi che aggiunti devono usare la stessa convenzione sul formato dei nomi (non è Binary_Expr ma BinaryExpr)
+- i nomi che proponi sono tra loro inconsistenti: IntegerOperation vs FloatingPoint (forse dovrebbe essere FloatingPointOperation?)
+- QSYM mette se non sbaglio "Expr" nei nomi delle classi: forse quindi IntegerExpr e FloatingPointExpr?
+- fai attenzione: non puoi considerare solo BinaryExpr nei tuoi ragionamenti! Come modelli una UnaryExpr e le altre classi? E' vero che tu non andrai a creare lato SYMQEMU tutte e possibili classi ma le devi prevdere! Altrimenti quello che fai andrà rifatto da zero quando lo si vuole estendere ad altre istruzioni diverse da add/cmp/etc che tu consideri. Forse quindi BinaryExpr (così come UnaryExpr) dovranno essere sottoclassi di IntegerOperation/FloatingPoint. Come detto però serve avere una visione d'insieme sulla gerarchia.
+
+
