@@ -26,9 +26,6 @@ Se usi  SYMCC_INPUT_FILE, il tuo programma deve leggere da file e non da stdin.
 
 
 
-
-
-
 Tu hai dichiarato dei metodi di alcune classi senza però implementarli. Credo che tu debba implementarli in:
 
 https://github.com/ZioSaba/symcc/blob/master/runtime/qsym_backend/qsym/qsym/pintool/codegen/expr_builder.cpp
@@ -42,4 +39,4 @@ Probabilmente devi aggiungere altri pezzi dentro al file.h. Se vedi, lui va a de
 
 
 Per il fatto che sei dovuto ripartire da zero, non ti so dire il perchè ma mi sembra strano che non ci sia modo di modificare il tutto senza dover ogni volta partire da zero.  
-L'unico modo per capire le cose in queste situazioni è debuggarle (cme funziona il sistema di build?). Non ci sono scorciatoie.
+L'unico modo per capire le cose in queste situazioni è debuggarle (cme funziona il sistema di build?). Non ci sono scorciatoie.-
