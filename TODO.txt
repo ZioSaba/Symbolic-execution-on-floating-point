@@ -38,5 +38,25 @@ Probabilmente devi aggiungere altri pezzi dentro al file.h. Se vedi, lui va a de
 
 
 
-Per il fatto che sei dovuto ripartire da zero, non ti so dire il perchè ma mi sembra strano che non ci sia modo di modificare il tutto senza dover ogni volta partire da zero.  
-L'unico modo per capire le cose in queste situazioni è debuggarle (cme funziona il sistema di build?). Non ci sono scorciatoie.-
+
+Quali parametri dovrà prendere la mia sym_FloatingPointAdd:
+- se la sorgente è un puntatore a memoria
+  # bisogna andare a leggere nella memoria simbolica a quell'indirizzo nei rispettivi indirizzi (sym_read di 4 byte)
+  # creare l'espressione della somma
+  # scrivere l'espressione nella memoria simbolica del puntatore destinazione (sym_write di 4 byte)
+  
+  
+  
+Modificare la memoria simbolica facendo in modo che possa gestire correttamente i dati FP.
+Vedi in RuntimeCommon.cpp per studiarti il backend simple e vedere le operazioni di lettura e scrittura in memoria.
+
+
+In Z3, sempre verificare che l'espressione su cui si lavora è di classe integer o floating point, perché se la seconda allora posso direttamente prendere l'argomento e lavorare su quello.
+
+
+
+
+ALTRI HELPER:
+- conversione da intero a FP
+- conversione da FP a intero
+- comparazione
