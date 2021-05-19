@@ -45,3 +45,37 @@ Queste funzioni sym_qualcosa vanno poi ad interfacciarsi con symCC più sotto, c
 
 
 
+
+Tutti gli helper delle istruzioni che QEMU usa prendono sempre come parametro anche la variabile globale env, perché potrebbe essere necessario dover accedere ad un particolare registro della CPU virtuale.
+
+
+Tutti i registri interi con cui lavora symQEMU vengono rappresentati in due modi:
+- tramite delle variabili tmp*
+- tramite un nome simbolico uguale al registro stesso a cui fa riferimento
+
+Per i registr SSE vengono utilizzati dei puntatori alla memoria della variabile globale env.
+
+
+
+Per lavorare sulle espessioni simboliche, symQEMU fa utilizzo di una "memoria simbolica".
+Questa memoria simbolica è un grandissimo array, dove ad ogni byte viene fatto il "mapping" al byte simbolico di nostro interesse.
+Per come questa è stata implementata finora, tale memoria suppone che tutti quanti i dati che contiene sono interi e quindi può ragionarci byte per byte.
+In FP però questa cosa non è possibile, quindi tocca girare attorno al problema.
+
+
+
+
+COME QEMU MODELLA LE MOVSS
+Per le operazioni di movimento dati non vengono utilizzati helper.
+Poiché una movss altro non è che la lettura/scrittura del contenuto di un registro, per rappresentarle QEMU utilizza due istruzioni:
+- ld32u_i64: prende come parametri un registro destinazione, un indirizzo base ed uno sfasamento da cui partire a prendere i prossimi 32bit
+- st32_i64: prende come parametri un registro sorgente, un indirizzo base ed uno sfasamento da cui partire a scrivere i prossimi 32 bit
+
+I registri XMM* in QEMU sono stati modellati tramite dei campi di una variabile globale chiamata env (che modella la CPU virtuale), il cui indirizzo viene calcolato partendo dall'indirizzo base di env e sfasandolo di una ceta costante.
+
+
+
+
+
+
+
