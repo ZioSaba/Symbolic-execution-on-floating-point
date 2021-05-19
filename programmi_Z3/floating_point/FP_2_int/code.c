@@ -744,6 +744,28 @@ void conversion_FP_int()
     Z3_ast uno_FP = Z3_mk_fpa_numeral_double(ctx, 2.0, FP_sort);
     Z3_ast zero_FP = Z3_mk_fpa_numeral_double(ctx, 0.0, FP_sort);
 
+    /* PROF
+    Z3_ast uno_fp_0 = Z3_mk_extract(ctx, 7, 0, uno_FP);
+    Z3_ast uno_fp_1 = Z3_mk_extract(ctx, 15, 8, uno_FP);
+    Z3_ast uno_fp_2 = Z3_mk_extract(ctx, 23, 16, uno_FP);
+    Z3_ast uno_fp_3 = Z3_mk_extract(ctx, 31, 24, uno_FP);
+    Z3_ast uno_fp_4 = Z3_mk_extract(ctx, 39, 32, uno_FP);
+    Z3_ast uno_fp_5 = Z3_mk_extract(ctx, 47, 40, uno_FP);
+    Z3_ast uno_fp_6 = Z3_mk_extract(ctx, 55, 48, uno_FP);
+    Z3_ast uno_fp_7 = Z3_mk_extract(ctx, 63, 56, uno_FP);
+
+    Z3_ast temp_1 = Z3_mk_concat(ctx, uno_fp_1, uno_fp_0);
+    Z3_ast temp_2 = Z3_mk_concat(ctx, uno_fp_2, temp_1);
+    Z3_ast temp_3 = Z3_mk_concat(ctx, uno_fp_3, temp_2);
+    Z3_ast temp_4 = Z3_mk_concat(ctx, uno_fp_4, temp_3);
+    Z3_ast temp_5 = Z3_mk_concat(ctx, uno_fp_5, temp_4);
+    Z3_ast temp_6 = Z3_mk_concat(ctx, uno_fp_6, temp_5);
+    //uno_FP = Z3_mk_concat(ctx, uno_fp_7, temp_6);
+
+    /*************/
+
+
+
     Z3_ast c1 = Z3_mk_fpa_gt(ctx, num_FP, uno_FP);
     Z3_solver_assert(ctx, s, c1);
 
