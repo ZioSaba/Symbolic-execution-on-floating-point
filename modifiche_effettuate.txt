@@ -28,13 +28,12 @@ Riga 236: definizione del builder simbolico e invocazione dei metodi delle class
 QSYM
 6) expr_builder.h
 Riga 25: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd nella classe ExprBuilder (risolve "no member added in class" per (5) )
+Riga 254: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd nella classe SymbolicExprBuilder
 
 
 7) gen_expr_builder.py
-Riga 45: aggiunta della nuova funzione FloatingPointAdd in createBinaryExpr (I CAZZO DI COMMENTI IN expr_builder.h !)
+Riga 45: aggiunta della nuova funzione FloatingPointAdd in createBinaryExpr
 
-
-Tocca risolvere undefined reference in 6
 
 
 
