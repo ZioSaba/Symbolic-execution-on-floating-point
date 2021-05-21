@@ -1,6 +1,8 @@
-Una cosa su cui però ho un dubbio, che sicuramente è un errore che ho fatto io da qualche parte ma che non riesco ad identificare, è dove mettere il "linking" diciamo tra l'istruzione fadd e la mia funzione simbolica FloatingPointAdd, in modo che symQEMU sa che alla fadd è legato il mio helper_FloatingPointAdd
+Una cosa su cui però ho un dubbio, che sicuramente è un errore che ho fatto io da qualche parte ma che non riesco ad identificare, è dove mettere il "linking" diciamo tra l'istruzione fadd e la mia funzione simbolica FloatingPointAdd,
+in modo che symQEMU sa che alla fadd è legato il mio helper_FloatingPointAdd
 
-Se non sbaglio fadd è un istruzione x87. Se non sbaglio abbiamo detto di concentrarci prima sulla parte floating fatta su registri XMM/SSE: non dovresti puntare alla addss ad esempio?  O i tuoi esempi che non forzano uso di x87 comunque usano fadd?
+Se non sbaglio fadd è un istruzione x87. Se non sbaglio abbiamo detto di concentrarci prima sulla parte floating fatta su registri XMM/SSE: non dovresti puntare alla addss ad esempio?  
+O i tuoi esempi che non forzano uso di x87 comunque usano fadd?
 
 Nella tua tabella non hai indicato dove si trovano molti degli helper SSE. Mi sembra la prima cosa da fare se devi gestirli. 
 Ad esempio per la addss, guarda qui. (ops_sse.h Line 591)
@@ -49,6 +51,17 @@ Quali parametri dovrà prendere la mia sym_FloatingPointAdd:
   
 Modificare la memoria simbolica facendo in modo che possa gestire correttamente i dati FP.
 Vedi in RuntimeCommon.cpp per studiarti il backend simple e vedere le operazioni di lettura e scrittura in memoria.
+
+Parti con implementare un helper che fa una printf() e vedi ti viene eseguito (dopo aver fatto le modifiche dette sopra). 
+Se ti viene eseguito allora inizi a pensare a cosa deve fare questo helper. L'helper dovrà a grandi linee:
+
+1) leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro sorgente XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu). Tu devi navigare le espressione e guardare solo FloatingPointExpr.
+
+2)  leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro destinazione XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu). Tu devi navigare le espressione e guardare solo FloatingPointExpr.
+
+3) costruire un espressione FloatingPointAddExpr usando come operandi quello che hai ottenuto a (1) e (2)
+
+4) scriviere (3) in memoria simbolica con sym_write_memory all'indirizzo a cui QEMU tiene registro destinazione XMM. Internamente sym_write_memory() "spezzerà" in diverse ExtractExpr la tua FloatingPointAddExpr
 
 
 In Z3, sempre verificare che l'espressione su cui si lavora è di classe integer o floating point, perché se la seconda allora posso direttamente prendere l'argomento e lavorare su quello.
