@@ -4,11 +4,11 @@ SYMQEMU
 Riga 4476: invocazione dell'helper simbolico per la addss prima dell'esecuzione di quello concreto
 
 2) tcg-runtime-sym.h (ok)
-Riga 51: dichiarazione dell'intestazione dell'helper della nuova funzione sym_addss
+Riga 52: dichiarazione dell'intestazione dell'helper della nuova funzione sym_addss
 
 
 3) tcg-runtime-sym.c (ok)
-Riga 119: dichiarazione del corpo di helper_sym_addss
+Riga 121: dichiarazione del corpo di helper_sym_addss
 
 
 

@@ -24,12 +24,40 @@ Tu devi navigare le espressione e guardare solo FloatingPointExpr.
 2)  leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro destinazione XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu). 
 Tu devi navigare le espressione e guardare solo FloatingPointExpr.
 
+
+/****************************************************/
+_sym_read_memory() attualmente ti darà sicuramente una espressione concat. Sarà qualcosa del tipo:
+
+Concat(e1, e2)
+
+dove:
+
+e1 = Extract(...., o1)
+e2 = Concat(e3, e4)
+e3 = Extract(...., o1)
+e4 = Concat(e5, e6)
+....
+
+Quindi tu dovrai "spacchettarla" per recuperare la tua espressione floating point, es. o1 nel mio esempio. Ti basta "navigare" l'espressione: per farlo potrebbe essere comodo definire un metodo nel runtime qsym che lo fa. 
+Ricorda che solo il runtime QSYM può usare i metodi C++, mentre SymQEMU può solo invocare i metodi C _sym_qualcosa esportati dal runtime QSYM.
+
+Dopo aver fatto la lettura di 4 byte nel puntatore ai registri, un "float" generalmente nasce da un operazione di conversione da intero. 
+Quindi sono quei metodo che creano la tua espressione simbolica floating point e la mettono in memoria. 
+Il tuo helper simbolica di addss deve solo "recuperare" dalla memoria quell'espressione, manipolarla (es. add), e riscriverla in memoria. 
+
+Ci sono dei casi in cui un floating point non nasce attraverso un operazione di conversione da intero, ma per ora concretriamoci sul caso più semplice. 
+Quindi per avere un primo prototipo devi modellare almeno un helper QEMU legato alla conversione da intero a float. Questo vuol dire gestirlo anche lato QSYM (dove nella gerarchia devi avere forse una classe IntToFloatConversion).
+/*****************************************************/
+
 3) costruire un espressione FloatingPointAddExpr usando come operandi quello che hai ottenuto a (1) e (2)
 
 4) scriviere (3) in memoria simbolica con sym_write_memory all'indirizzo a cui QEMU tiene registro destinazione XMM. Internamente sym_write_memory() "spezzerà" in diverse ExtractExpr la tua FloatingPointAddExpr
 
-
-In Z3, sempre verificare che l'espressione su cui si lavora è di classe integer o floating point, perché se la seconda allora posso direttamente prendere l'argomento e lavorare su quello.
+/*****************************************************/
+Qui devi solo fare in modo che sia possibile creare un Extract(...., e) su un espressione e costruita al punto (2). 
+Se lo permetti, non devi fare altro. 
+Se non lo permetti, allora dovrai modificare _sym_write_memory (che appunto fa un extract se l'oggetto è multi byte)
+/*****************************************************/
 
 
 

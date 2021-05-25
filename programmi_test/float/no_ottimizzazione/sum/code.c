@@ -2,14 +2,19 @@
 #include <stdlib.h>
 
 float foo (float a){
-    float x = 15.0;
+    float x = 15.5;
     float res = x + a;
-    return res;
+    if (res < 20.0)
+        return 1.0;
+    else 
+        return -1.0;
 }
 
 void main (){
-    float a = 10.0;
+    int a;
+    scanf("%d", &a);
+    printf("%d\n", a);
     float res = foo(a);
-    printf("%f \n", res);
+    printf("%f\n", res);
     return;    
 }
