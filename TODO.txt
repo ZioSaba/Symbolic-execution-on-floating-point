@@ -1,42 +1,5 @@
-Una cosa su cui però ho un dubbio, che sicuramente è un errore che ho fatto io da qualche parte ma che non riesco ad identificare, è dove mettere il "linking" diciamo tra l'istruzione fadd e la mia funzione simbolica FloatingPointAdd,
-in modo che symQEMU sa che alla fadd è legato il mio helper_FloatingPointAdd
-
-Se non sbaglio fadd è un istruzione x87. Se non sbaglio abbiamo detto di concentrarci prima sulla parte floating fatta su registri XMM/SSE: non dovresti puntare alla addss ad esempio?  
-O i tuoi esempi che non forzano uso di x87 comunque usano fadd?
-
-Nella tua tabella non hai indicato dove si trovano molti degli helper SSE. Mi sembra la prima cosa da fare se devi gestirli. 
-Ad esempio per la addss, guarda qui. (ops_sse.h Line 591)
-
-In questo momento devi sapere capire dove:
-1) si trovano tutti gli helper QEMU
-2) dove vengono invocate le gen_helper relative a questi helper
-Questo per tutti gli helper usati in una tua funzione che ad esempio: (1) prende un intero, (2) fa cast a float o double, (3) ci somma un altro valore, (4) fa un if/else sul risultato. 
-
-Da quello che vedo alcuni gen_helper per SSE sono indicizzati in una tabella: questa la entry per addss. (translate.c Line 2757, sempre in target/i386)
-Usando byte dell'attuale istruzione SSE, QEMU accede alla entry della tabella (translate.c Line 3059), recuperando puntatore alla funzione gen_helper_XXX di interesse e la invoca (per addss credo lo faccia qui -> translate.c Line 4475). 
-
-Tieni conto che per ora per le prime prove potresti anche solo avere degli helper che internamento fanno solo una "printf("ESEGUITA\n")". In questo modo puoi fare prove indipendentemente da SymQEMU/SymCC/QSYM.
-Successivamente dentro l'helper andrai ad invocare funzioni del runtime di SymQEMU.
-
-
-
-
-Quindi ti funziona se lanci i comandi manualmente ma non se li metti nel Makefile?
-Prova con una script bash che esegue i comandi che davi manualmente.
-Se usi  SYMCC_INPUT_FILE, il tuo programma deve leggere da file e non da stdin.
-
-
-
-
-Tu hai dichiarato dei metodi di alcune classi senza però implementarli. Credo che tu debba implementarli in:
-
+Dentro l'helper bisogna andare ad invocare funzioni del runtime di SymQEMU e poi dichiarare i metodi delle classi senza in:
 https://github.com/ZioSaba/symcc/blob/master/runtime/qsym_backend/qsym/qsym/pintool/codegen/expr_builder.cpp
-
-Questo file viene se non sbaglio letto da gen_expr_builder.py, che vi aggiunge ulteriore codice, e lo salva in ../expr_builder__gen.cpp. Se tu aggiungi codice corretto in expr_builder.cpp, lo script python dovrebbe ricopiarlo senza toccarlo. 
-Tuttavia non sono sicuro al 100% quindi verifica. La cosa migliore è capire quello che fa gen_expr_builder.py.
-
-Probabilmente devi aggiungere altri pezzi dentro al file.h. Se vedi, lui va a definire una serie di cose nel file .h legate alla "add" e probabilmente lo script se le aspetta anche per il tuo nuovo kind. 
-
 
 
 
@@ -55,9 +18,11 @@ Vedi in RuntimeCommon.cpp per studiarti il backend simple e vedere le operazioni
 Parti con implementare un helper che fa una printf() e vedi ti viene eseguito (dopo aver fatto le modifiche dette sopra). 
 Se ti viene eseguito allora inizi a pensare a cosa deve fare questo helper. L'helper dovrà a grandi linee:
 
-1) leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro sorgente XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu). Tu devi navigare le espressione e guardare solo FloatingPointExpr.
+1) leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro sorgente XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu).
+Tu devi navigare le espressione e guardare solo FloatingPointExpr.
 
-2)  leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro destinazione XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu). Tu devi navigare le espressione e guardare solo FloatingPointExpr.
+2)  leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro destinazione XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu). 
+Tu devi navigare le espressione e guardare solo FloatingPointExpr.
 
 3) costruire un espressione FloatingPointAddExpr usando come operandi quello che hai ottenuto a (1) e (2)
 
@@ -65,6 +30,9 @@ Se ti viene eseguito allora inizi a pensare a cosa deve fare questo helper. L'he
 
 
 In Z3, sempre verificare che l'espressione su cui si lavora è di classe integer o floating point, perché se la seconda allora posso direttamente prendere l'argomento e lavorare su quello.
+
+
+
 
 
 
