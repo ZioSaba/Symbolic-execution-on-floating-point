@@ -5,4 +5,4 @@ path_programma="/home/zio-saba/Scrivania/progetto_laurea/programmi_test/float/no
 
 
 run_ext:
-	SYMCC_OUTPUT_DIR=$(dir_res) $(dir_command) $(path_programma)
+	SYMCC_OUTPUT_DIR=$(dir_res) $(dir_command) $(flag) $(path_programma)

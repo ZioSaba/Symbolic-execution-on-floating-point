@@ -1,23 +1,21 @@
 SYMQEMU
 
-1) tcg-op.h (ok)
-Riga 705: aggiunta della funzione che invoca la macro che collega l'helper alla funzione simbolica sym_FloatingPointAdd
-
+1) translate.c (ok)
+Riga 4476: invocazione dell'helper simbolico per la addss prima dell'esecuzione di quello concreto
 
 2) tcg-runtime-sym.h (ok)
-Riga 51: dichiarazione dell'helper della nuova funzione FloatingPointAdd (risolve "implicit declaration" per (1) )
+Riga 51: dichiarazione dell'intestazione dell'helper della nuova funzione sym_addss
 
 
 3) tcg-runtime-sym.c (ok)
-Riga 119: creazione dell'helper associato alla funzione FloatingPointAdd
-
+Riga 119: dichiarazione del corpo di helper_sym_addss
 
 
 
 SYMCC
 
 4) RuntimeCommon.h
-Riga 67: dichiarazione del prototipo del costruttore simbolico della FloatingPointAdd
+Riga 67: dichiarazione del prototipo del costruttore simbolico della Addss
 
 
 5) Runtime.cpp (qsym backend)
@@ -27,21 +25,9 @@ Riga 236: definizione del builder simbolico e invocazione dei metodi delle class
 
 QSYM
 6) expr_builder.h
-Riga 25: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd nella classe ExprBuilder (risolve "no member added in class" per (5) )
-Riga 254: aggiunta del metodo per la costruzione dell'espressione simbolica della FloatingPointAdd nella classe SymbolicExprBuilder
+Riga 25: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe ExprBuilder (risolve "no member added in class" per (5) )
+Riga 255: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder
 
 
 7) gen_expr_builder.py
-Riga 45: aggiunta della nuova funzione FloatingPointAdd in createBinaryExpr
-
-
-
-
-
-expr.h (in corso...)
-Riga 448: ho iniziato a definire le nuove classi
-Riga 832: modifiche della AddExpr intera
-Riga 856: modifiche della SubExpr intera
-Riga 880: modifiche della MulExpr intera
-Riga 903: modifiche della UDivExpr intera
-Riga 927: modifiche della SDivExpr intera
+Riga 45: aggiunta della nuova funzione Addss in createBinaryExpr

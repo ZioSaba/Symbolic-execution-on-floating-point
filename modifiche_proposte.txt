@@ -44,6 +44,8 @@ Riguardo le modifiche che hai proposto per la gerarchie delle classi di QSYM:
 - i nomi delle classi che aggiunti devono usare la stessa convenzione sul formato dei nomi (non è Binary_Expr ma BinaryExpr)
 - i nomi che proponi sono tra loro inconsistenti: IntegerOperation vs FloatingPoint (forse dovrebbe essere FloatingPointOperation?)
 - QSYM mette se non sbaglio "Expr" nei nomi delle classi: forse quindi IntegerExpr e FloatingPointExpr?
-- fai attenzione: non puoi considerare solo BinaryExpr nei tuoi ragionamenti! Come modelli una UnaryExpr e le altre classi? E' vero che tu non andrai a creare lato SYMQEMU tutte e possibili classi ma le devi prevdere! Altrimenti quello che fai andrà rifatto da zero quando lo si vuole estendere ad altre istruzioni diverse da add/cmp/etc che tu consideri. Forse quindi BinaryExpr (così come UnaryExpr) dovranno essere sottoclassi di IntegerOperation/FloatingPoint. Come detto però serve avere una visione d'insieme sulla gerarchia.
+- fai attenzione: non puoi considerare solo BinaryExpr nei tuoi ragionamenti! Come modelli una UnaryExpr e le altre classi? E' vero che tu non andrai a creare lato SYMQEMU tutte e possibili classi ma le devi prevdere! 
+Altrimenti quello che fai andrà rifatto da zero quando lo si vuole estendere ad altre istruzioni diverse da add/cmp/etc che tu consideri. 
+Forse quindi BinaryExpr (così come UnaryExpr) dovranno essere sottoclassi di IntegerOperation/FloatingPoint. Come detto però serve avere una visione d'insieme sulla gerarchia.
 
 

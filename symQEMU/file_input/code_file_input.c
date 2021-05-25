@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 
 #define MAX_BUF_SIZE 100
@@ -41,22 +42,21 @@ int foo(char* buf) {
 
 int main() {
     
-    FILE* desc = fopen("./input/input.dat", "r");
-    if (desc == NULL){
+    int desc = open("./input/input.dat", O_RDONLY);
+    if (desc == -1){
         printf("Cannot open input file...");
         return -1;
     }
 
-    char buf[MAX_BUF_SIZE];
+    char buf[MAX_BUF_SIZE]; //MAX_BUF_SIZE=100
 
-    while(fgets(buf, MAX_BUF_SIZE, desc) != NULL){
-        printf("%s", buf);
-        printf("%d\n", foo(buf));
-        memset(buf, 0, MAX_BUF_SIZE);
-    }
+    int num_bytes = 0;
+    int count = 0;
 
-    int close = fclose(desc);
-    if (close != 0){
+    num_bytes = read(desc, buf, 5);
+    printf("%d", foo(buf));
+
+    if(close(desc) == -1){
         printf("Cannot close input file...");
         return -1;
     }
