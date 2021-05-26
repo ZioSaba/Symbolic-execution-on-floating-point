@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float foo (float a){
+float foo (int a){
     float x = 15.5;
     float res = x + a;
     if (res < 20.0)

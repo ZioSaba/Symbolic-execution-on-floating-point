@@ -15,8 +15,7 @@ Quali parametri dovrà prendere la mia sym_FloatingPointAdd:
 Modificare la memoria simbolica facendo in modo che possa gestire correttamente i dati FP.
 Vedi in RuntimeCommon.cpp per studiarti il backend simple e vedere le operazioni di lettura e scrittura in memoria.
 
-Parti con implementare un helper che fa una printf() e vedi ti viene eseguito (dopo aver fatto le modifiche dette sopra). 
-Se ti viene eseguito allora inizi a pensare a cosa deve fare questo helper. L'helper dovrà a grandi linee:
+ L'helper dovrà a grandi linee:
 
 1) leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro sorgente XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu).
 Tu devi navigare le espressione e guardare solo FloatingPointExpr.

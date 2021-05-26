@@ -9,4 +9,4 @@ run_ext:
 
 
 clean:
-	rm 0000*
+	rm ./risultati/0000*
