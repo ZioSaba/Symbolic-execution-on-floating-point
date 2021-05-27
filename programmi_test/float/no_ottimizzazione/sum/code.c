@@ -1,20 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float foo (int a){
-    float x = 15.5;
+float foo (float a){
+    float x = 15.0;
     float res = x + a;
-    if (res < 20.0)
-        return 1.0;
-    else 
-        return -1.0;
+    return res;
 }
 
 void main (){
-    int a;
-    scanf("%d", &a);
-    printf("%d\n", a);
+    float a = 10.0;
     float res = foo(a);
-    printf("%f\n", res);
+    printf("%f \n", res);
     return;    
 }

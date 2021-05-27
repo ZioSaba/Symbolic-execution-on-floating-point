@@ -3,6 +3,10 @@ https://github.com/ZioSaba/symcc/blob/master/runtime/qsym_backend/qsym/qsym/pint
 
 
 
+////////////////////////////////////////////
+l'istruzione tcg_gen_addi_ptr serve per generare il codice che aa runtime calcolalerà l'indrizzo del registro xmm sorgente e destinazione dentro CPUX86State.
+/////////////////////////////////////
+
 
 Quali parametri dovrà prendere la mia sym_FloatingPointAdd:
 - se la sorgente è un puntatore a memoria
@@ -62,9 +66,44 @@ Se non lo permetti, allora dovrai modificare _sym_write_memory (che appunto fa u
 
 
 
+Per recuperare i valori concreti dei due registri (dst e src), ti basta usare il puntatore che ricevi. env potrebbe non servirti in questo helper.
+In generale può essere utile per accedere ad altri registri xmm (diversi dai due su cui hai già i puntatori) o qualsiasi altra cosa della vCPU. Ad esempio, ai fini di debug, puoi stamparti il valore attuale del program counter. 
+Probabilmente per comiss ti servirà env.
+
+
+Gli helper di conversioni devono essere dichiarati/definiti in modo diverso in quando prendo come input un temp (intero), lo convertono a float e lo scrivono nel registro xmm indicato dal puntatore. 
+Quindi potrebbe venire definito come:
+
+DEF_HELPER_4(sym_cvtsi2ss, void, env, ZMMReg, ptr, i32)
+
+dove ZMMReg è il puntatore al registro xmm destinazione, ptr è conterrà il puntatore all'espressione simbolica del temp intero, mentre i32 il valore concreto del temp intero. Di nuovo env potrebbe far comodo per debug.
+
+
+Visto che è una operazione unario, potresti semplificarlo a:
+
+DEF_HELPER_3(sym_cvtsi2ss, void, env, ZMMReg, ptr)
+
+Infatti se ptr è zero, non ti serve conoscere il valore concreto del temp, ma dovrai marcare la parte di memoria simbolica associata a ZMMReg come concreta.
+
+
+L'helper sarà definito con qualcosa del tipo:
+
+void helper_sym_cvtsi2ss(CPUX86State *env, ZMMReg *d, void* expr)
+{
+    // body
+}
+
+E dovrà:
+
+1) se expr != NULL, allora deve creare espressione simbolica che modella conversione da int a float, e poi la scrive in memoria con sym_write_memory all'indirizzo d
+2) se expr == NULL, deve scrivere a NULL con sym_write_memory 4 byte all'indirizzo d
+Forse per correttezza non bisogna scrivere solo 4 byte ma tutti 16 byte (marcandoli sempre a NULL) ma bisogna vedere cosa dice Intel.
+
+Ovviamente poi in translate.c devi passargli al gen_helper_.... i giusti argomenti. Se lo lasci come è ora ovviamente è sbagliato
+Vedi come fa SymQEMU.
+
 
 
 ALTRI HELPER:
 - conversione da intero a FP
-- conversione da FP a intero
 - comparazione

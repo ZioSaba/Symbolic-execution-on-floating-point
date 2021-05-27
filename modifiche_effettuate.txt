@@ -1,25 +1,30 @@
 SYMQEMU
 
 1) translate.c (ok)
-Riga 4476: invocazione dell'helper simbolico per la addss prima dell'esecuzione di quello concreto
+Riga 3536: invocazione dell'helper simbolico per la cvtsi2ss prima dell'esecuzione di quello concreto
+Riga 4477: invocazione dell'helper simbolico per la addss prima dell'esecuzione di quello concreto
 
 2) tcg-runtime-sym.h (ok)
-Riga 52: dichiarazione dell'intestazione dell'helper della nuova funzione sym_addss
+Riga 52: dichiarazione del prototipo dell'helper per la nuova funzione sym_addss    (risolve undefined reference in (1) )
+Riga 53: dichiarazione del prototipo dell'helper per la nuova funzione sym_cvtsi2ss (risolve undefined reference in (1) )
 
 
-3) tcg-runtime-sym.c (ok)
-Riga 121: dichiarazione del corpo di helper_sym_addss
+3) tcg-runtime-sym.c (in corso...)
+Riga 121: dichiarazione del corpo di helper_sym_addss    (risolve undefined reference in (2) )
+Riga 142: dichiarazione del corpo di helper_sym_cvtsi2ss (risolve undefined reference in (2) )
 
 
 
 SYMCC
 
 4) RuntimeCommon.h
-Riga 67: dichiarazione del prototipo del costruttore simbolico della Addss
+Riga 67: dichiarazione del prototipo del costruttore simbolico della addss
+Riga 68: dichiarazione del prototipo del costruttore simbolico della cvtsi2ss
 
 
 5) Runtime.cpp (qsym backend)
-Riga 236: definizione del builder simbolico e invocazione dei metodi delle classi (risolve "undefined reference" per (4) )
+Riga 236: definizione del builder simbolico e invocazione dei metodi delle classi per Addss     (risolve "undefined reference" per (4) )
+Riga 269: definizione del builder simbolico e invocazione dei metodi delle classi per CVTSI2SS  (risolve "undefined reference" per (4) )
 
 
 
