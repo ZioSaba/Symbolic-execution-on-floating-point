@@ -17,23 +17,24 @@ int main (){
 
     int desc = open("/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/input/input.dat", O_RDONLY);
     if (desc == -1){
-        printf("Errore nell'apertura del file...\n");
+        //printf("Errore nell'apertura del file...\n");
         return -1;
     }
 
     int buf;
 
-    int byte_letti = read(desc, &buf, 4);
+    int byte_letti = read(desc, &buf, sizeof(int));
     if (byte_letti < 0){
-        printf("Errore nella read...\n");
+        //printf("Errore nella read...\n");
+        return -1;
     }
 
     //int a = atoi(buf);
-    printf("buf=%d\n", buf);
+    //printf("buf=%d\n", buf);
     printf("%f\n", foo(buf));
 
     if (close(desc) == -1){
-        printf("Errore nella chiusura del file...\n");
+        //printf("Errore nella chiusura del file...\n");
         return -1;
     }
 

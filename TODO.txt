@@ -105,5 +105,4 @@ Vedi come fa SymQEMU.
 
 
 ALTRI HELPER:
-- conversione da intero a FP
 - comparazione

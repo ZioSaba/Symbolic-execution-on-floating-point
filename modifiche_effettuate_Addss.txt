@@ -1,0 +1,47 @@
+SYMQEMU
+1) translate.c (ok)
+Riga 4477: invocazione dell'helper simbolico per la addss prima dell'esecuzione di quello concreto
+
+
+2) tcg-runtime-sym.h (ok)
+Riga 52: dichiarazione del prototipo dell'helper per la nuova funzione sym_addss     (risolve undefined reference in (1) )
+
+
+3) tcg-runtime-sym.c (in corso...)
+Riga 121: dichiarazione del corpo di helper_sym_addss     (risolve undefined reference in (2) )
+
+
+
+SYMCC
+4) RuntimeCommon.h
+Riga 67: dichiarazione del prototipo del costruttore simbolico della addss
+
+
+
+5) Runtime.cpp (qsym backend)
+Riga 236: definizione del builder simbolico e invocazione dei metodi delle classi per Addss     (risolve "undefined reference" per (4) )
+
+
+
+QSYM
+6) expr_builder.h
+Riga 25: aggiunta del metodo per la costruzione dell'espressione della Addss nella classe ExprBuilder     (risolve "no member added in class" per (5) )
+Riga 219: aggiunta del metodo per il collegamento tra il simbolo + e Addss nella classe ConstantFoldingExprBuilder
+Riga 256: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder quando entrambi i parametri sono espressioni simboliche
+Riga 281: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder quando uno dei due parametri è costante e l'altro è una variabile
+Riga 282: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder quando entrambi i parametri sono variabili
+
+
+7) expr.h
+Riga 81: aggiunta del nuovo tipo di operazione Addss in Kind
+Riga 962: aggiunta della classe per l'esecuzione della Addss
+
+
+8) gen_expr_builder.py
+Riga 45: aggiunta della nuova funzione Addss in createBinaryExpr
+
+
+9)expr_builder.cpp
+Riga 702: definizione del corpo del metodo aggiunto a riga 256 di expr_builder.h
+Riga 707: definizione del corpo del metodo aggiunto a riga 281 di expr_builder.h
+Riga 712: definizione del corpo del metodo aggiunto a riga 282 di expr_builder.h
