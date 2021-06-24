@@ -1,0 +1,17 @@
+SYMCC
+1) RuntimeCommon.h
+Riga 69: dichiarazione del prototipo del costruttore simbolico della floating_point_constant
+
+
+2) Runtime.cpp (qsym backend)
+Riga 274: definizione del metodo per l'invocazione della costruzione simbolica della Cvtsi2ss
+
+
+QSYM
+3) expr_builder.h
+Riga 19: aggiunta del metodo per la costruzione dell'espressione della FPConstant nella classe ExprBuilder     (risolve "no member added in class" per (1) )
+Riga 85: aggiunta del metodo per la costruzione della classe FPConstantExpr per la funzione simbolica Cvtsi2ss
+
+
+4) expr.h (RICONTROLLA LA SECONDA RIGA)
+Riga 431: aggiunta della classe per l'esecuzione della Cvtsi2ss

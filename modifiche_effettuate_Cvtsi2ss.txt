@@ -7,8 +7,8 @@ Riga 3536: invocazione dell'helper simbolico per la cvtsi2ss prima dell'esecuzio
 Riga 53: dichiarazione del prototipo dell'helper per la nuova funzione sym_cvtsi2ss     (risolve undefined reference in (1) )
 
 
-3) tcg-runtime-sym.c (in corso...)
-Riga 142: dichiarazione del corpo di helper_sym_cvtsi2ss     (risolve undefined reference in (2) )
+3) tcg-runtime-sym.c (RICONTROLLA LA RIGA)
+Riga 157: dichiarazione del corpo di helper_sym_cvtsi2ss     (risolve undefined reference in (2) )
 
 
 
@@ -18,19 +18,19 @@ Riga 68: dichiarazione del prototipo del costruttore simbolico della cvtsi2ss
 
 
 5) Runtime.cpp (qsym backend)
-Riga 33: definizione del builder simbolico e invocazione dei metodi delle classi per CVTSI2SS     (risolve "undefined reference" per (4) )
-Riga 269: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder quando entrambi i parametri sono espressioni simboliche
+Riga 269: definizione del metodo per l'invocazione della costruzione simbolica della Cvtsi2ss
 
 
 QSYM
 6) expr_builder.h
 Riga 33: aggiunta del metodo per la costruzione dell'espressione della Cvtsi2ss nella classe ExprBuilder     (risolve "no member added in class" per (5) )
-Riga 269: aggiunta del metodo per la costruzione dell'espressione simbolica della Cvtsi2ss nella classe SymbolicExprBuilder
+Riga 97: aggiunta del metodo per la costruzione della classe Cvtsi2ssExpr per la funzione simbolica Cvtsi2ss
+Riga 270: aggiunta del metodo per la costruzione dell'espressione simbolica della Cvtsi2ss nella classe SymbolicExprBuilder
 
 
-7) expr.h
+7) expr.h (RICONTROLLA LA SECONDA RIGA)
 Riga 82: aggiunta del nuovo tipo di operazione Cvtsi2ss in Kind
-Riga 1099: aggiunta della classe per l'esecuzione della Cvtsi2ss
+Riga 941: aggiunta della classe per l'esecuzione della Cvtsi2ss
 
 
 8) gen_expr_builder.py
@@ -38,5 +38,23 @@ Riga 69: aggiunta della nuova funzione Cvtsi2ss in createUnaryExpr
 
 
 9)expr_builder.cpp
-Riga 717: definizione del corpo del metodo aggiunto a riga 269 di expr_builder.h
+Riga 717: definizione del corpo del metodo aggiunto a riga 271 di expr_builder.h
 
+
+/**********************************************************************************/
+APPROCCIO KLEEE
+/**********************************************************************************/
+  case Expr::SIToFP: {
+    int srcWidth;
+    SIToFPExpr *ce = cast<SIToFPExpr>(e);
+    Z3ASTHandle src = castToBitVector(construct(ce->src, &srcWidth));
+    *width_out = ce->getWidth();
+    assert(&(ConstantExpr::widthToFloatSemantics(*width_out)) !=
+               &(llvm::APFloat::Bogus) &&
+           "Invalid SIToFP width");
+    return Z3ASTHandle(
+        Z3_mk_fpa_to_fp_signed(ctx, getRoundingModeSort(ce->roundingMode), src,
+                               getFloatSortFromBitWidth(*width_out)),
+        ctx);
+  }
+/**********************************************************************************/
