@@ -1,75 +1,16 @@
-////////////////////////////////////////////
-l'istruzione tcg_gen_addi_ptr serve per generare il codice che a runtime calcolalerà l'indrizzo del registro xmm sorgente e destinazione dentro CPUX86State.
-/////////////////////////////////////
+Per implementare l'helper simbolico di comiss devi costruire un espressione che modella questi scenari e scriverla in CC_SRC che poi dovrebbe essere utilizzato quando si valuta il salto condizionato.
 
+Per creare la formula che descrive i vari scenari, devi usare una formula IfThenElse (ITE) che ha una semantica del tipo: ITE(cond, A, B)
 
-Quali parametri dovrà prendere la mia sym_FloatingPointAdd:
-  # leggere nella memoria simbolica nei rispettivi indirizzi (sym_read di 4 byte)
-  # creare l'espressione della somma
-  # scrivere l'espressione nella memoria simbolica del puntatore destinazione (sym_write di 4 byte)
-  
-  
-  
-Modificare la memoria simbolica facendo in modo che possa gestire correttamente i dati FP.
-Vedi in RuntimeCommon.cpp per studiarti il backend simple e vedere le operazioni di lettura e scrittura in memoria.
+ - se cond è vera, allora l'espressione vale A
+ - altrimenti B. 
+ 
+A e B devono essere oggetti tra loro "consistenti" (stesso numero di bit e credo stesso tipo Z3). 
+Se hai più casi da gestire, devi procedere ricorsivamente (es. B può essere a sua volta una ITE).
+QSYM ha già nella sua gerarchie un'espressione (IteExpr) che modella le ITE Z3, probabilmente dovrai "esportarla" a SymCC/SymQEMU definendo es. _sym_build_ite().
 
- L'helper dovrà a grandi linee:
+Ti consiglio di fare delle prove con Z3 andando a creare delle ITE che coinvolgono i tipi Z3 che stai usando tu per i float. Se tutto funziona, allora provi ad implementarlo in SymCC/SymQEMU.
 
-1) leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro sorgente XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu).
-Tu devi navigare le espressione e guardare solo FloatingPointExpr.
-
-2)  leggere l'espressione simbolica dalla memoria simbolica all'indirizzo a cui QEMU tiene registro destinazione XMM. sym_read_memory() ti restituirà una ConcatExpr di ExtractExpr su FloatingPointExpr (che devi definire tu). 
-Tu devi navigare le espressione e guardare solo FloatingPointExpr.
-
-
-/****************************************************/
-_sym_read_memory() attualmente ti darà sicuramente una espressione concat. Sarà qualcosa del tipo:
-
-Concat(e1, e2)
-
-dove:
-
-e1 = Extract(...., o1)
-e2 = Concat(e3, e4)
-e3 = Extract(...., o1)
-e4 = Concat(e5, e6)
-....
-
-Quindi tu dovrai "spacchettarla" per recuperare la tua espressione floating point, es. o1 nel mio esempio. Ti basta "navigare" l'espressione: per farlo potrebbe essere comodo definire un metodo nel runtime qsym che lo fa. 
-Ricorda che solo il runtime QSYM può usare i metodi C++, mentre SymQEMU può solo invocare i metodi C _sym_qualcosa esportati dal runtime QSYM.
-
-Dopo aver fatto la lettura di 4 byte nel puntatore ai registri, un "float" generalmente nasce da un operazione di conversione da intero. 
-Quindi sono quei metodo che creano la tua espressione simbolica floating point e la mettono in memoria. 
-Il tuo helper simbolica di addss deve solo "recuperare" dalla memoria quell'espressione, manipolarla (es. add), e riscriverla in memoria. 
-
-Ci sono dei casi in cui un floating point non nasce attraverso un operazione di conversione da intero, ma per ora concretriamoci sul caso più semplice. 
-Quindi per avere un primo prototipo devi modellare almeno un helper QEMU legato alla conversione da intero a float. Questo vuol dire gestirlo anche lato QSYM (dove nella gerarchia devi avere forse una classe IntToFloatConversion).
-/*****************************************************/
-
-3) costruire un espressione FloatingPointAddExpr usando come operandi quello che hai ottenuto a (1) e (2)
-
-4) scriviere (3) in memoria simbolica con sym_write_memory all'indirizzo a cui QEMU tiene registro destinazione XMM. Internamente sym_write_memory() "spezzerà" in diverse ExtractExpr la tua FloatingPointAddExpr
-
-/*****************************************************/
-Qui devi solo fare in modo che sia possibile creare un Extract(...., e) su un espressione e costruita al punto (2). 
-Se lo permetti, non devi fare altro. 
-Se non lo permetti, allora dovrai modificare _sym_write_memory (che appunto fa un extract se l'oggetto è multi byte)
-/*****************************************************/
-
-
-Per recuperare i valori concreti dei due registri (dst e src), ti basta usare il puntatore che ricevi. env potrebbe non servirti in questo helper.
-In generale può essere utile per accedere ad altri registri xmm (diversi dai due su cui hai già i puntatori) o qualsiasi altra cosa della vCPU. Ad esempio, ai fini di debug, puoi stamparti il valore attuale del program counter. 
-Probabilmente per comiss ti servirà env.
-
-
-
-/******************************************************/
-No, questa funzione si occupa solo di creare una somma Z3 floating point. I due figli sono due bitvector floating point. 
-Poi nel tuo esempio minimale, uno sarà un bitvector floating point che dipende dall'input e l'altro sarà un floating point costante. 
-Sarà helper in SymQEMU, che quando vede che almeno uno dei due operandi non è costante, crea un bit vector floating point constante per il l'operando costante. 
-Quindi serve avere nel runtime un metodo che permette di creare un bitvector floating point costante. 
-La logica è la sta stessa rispetto gli operatori binari su operazioni intere, che se vedi chiamano _sym_build_integer per creare un bitvector intero costante.
-/*******************************************************/
-
-ALTRI HELPER:
-- comparazione
+Infine, per scrivere il risultato su CC_SRC che corrisponde al registro TCG cc_src, probabilmente dovrai in realtà recuperare un riferimento a cc_src_expr e sovrascrivere quest'ultimo. 
+Un'altra strada, rispetto a recuperare il riferimento, potrebbe essere avere un _sym_helper_comiss che ha un output e che questo output è cc_src_expr. 
+Direi che questa è una cosa da decidere dopo che hai risolto la costruzione dell'espressione ITE.
