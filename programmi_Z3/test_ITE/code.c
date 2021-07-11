@@ -709,6 +709,7 @@ void ite_example()
     printf("Z3 ITE\n");
 
     Z3_context ctx = mk_context();
+    Z3_solver s = mk_solver(ctx);
     
     Z3_sort FP_sort = Z3_mk_fpa_sort(ctx, 11, 53);
 
@@ -723,26 +724,63 @@ void ite_example()
 
     Z3_ast two = Z3_mk_fpa_numeral_double(ctx, 2.0, FP_sort); 
     Z3_ast one = Z3_mk_fpa_numeral_double(ctx, 1.0, FP_sort);
-    Z3_ast NaN = Z3_mk_fpa_nan(ctx, FP_sort); // ???
+    Z3_ast zero = Z3_mk_fpa_numeral_double(ctx, 0.0, FP_sort);
 
-    Z3_ast livello_4 = Z3_mk_ite(ctx, Z3_mk_fpa_gt(ctx, one, two), maggiore, uguale);
+    Z3_ast livello_5 = Z3_mk_ite(ctx, Z3_mk_fpa_is_nan(ctx, two), unordered, unordered);
+    Z3_ast livello_4 = Z3_mk_ite(ctx, Z3_mk_fpa_is_nan(ctx, one), unordered, livello_5);
     Z3_ast livello_3 = Z3_mk_ite(ctx, Z3_mk_fpa_lt(ctx, one, two), minore, livello_4);
-    Z3_ast livello_2 = Z3_mk_ite(ctx, Z3_mk_fpa_is_nan(ctx, one), unordered, livello_3);
-    Z3_ast livello_1 = Z3_mk_ite(ctx, Z3_mk_fpa_is_nan(ctx, two), unordered, livello_2); 
-
+    Z3_ast livello_2 = Z3_mk_ite(ctx, Z3_mk_fpa_gt(ctx, one, two), maggiore, uguale);
+    Z3_ast livello_1 = Z3_mk_ite(ctx, Z3_mk_fpa_geq(ctx, one, two), livello_2, livello_3);
 
     // flowchart mio
 
-    /* isNaN(one)?  : unordered = 2
-                    : isNaN(two)?   : unordered = 2
-                                    : is_less_than(one, two)?   : minore = -1
-                                                                : is_greater_than(one, two)?    : maggiore = 1
-                                                                                                : uguale = 0
+    /* is_greater_equal(one, two)?  :   is_greater(one, two)    : 1
+                                                                : 0
+                                    :   is_less(one, two)   : -1
+                                                            : is_NaN(one)   : 2
+                                                                            : is_NaN(two)   : 2
+                                                                                            : 2
     */
 
     
 
     printf("term: %s\n", Z3_ast_to_string(ctx, livello_1));
+
+    //Z3_solver_assert(ctx, s, livello_1);                      //dovrebbe essere giusto, ma non funziona
+    //Z3_solver_assert(ctx, s, Z3_mk_eq(ctx, zero, zero));      //funziona normalmente
+    //Z3_ast prova = Z3_mk_ite(ctx, Z3_mk_eq(ctx, zero, zero), Z3_mk_fpa_numeral_double(ctx, 0.0, FP_sort), Z3_mk_fpa_numeral_double(ctx, 0.0, FP_sort));   // INVALID_ARGS in solver_assert()
+    //Z3_ast prova = Z3_mk_ite(ctx, Z3_mk_eq(ctx, zero, zero), Z3_mk_fpa_numeral_double(ctx, 0.0, FP_sort), livello_5);                                     // EXCEPTION in solver_assert()
+
+
+    Z3_ast prova = Z3_mk_ite(ctx, Z3_mk_eq(ctx, zero, zero), Z3_mk_eq(ctx, zero, zero), Z3_mk_eq(ctx, zero, zero)); // unico test funzionante, ma non è quello che serve a noi
+
+    Z3_solver_assert(ctx, s, prova);
+
+
+    if (Z3_solver_check(ctx, s) == Z3_L_TRUE){
+        printf("va bene\n");
+    }
+
+    /*
+    Z3_ast v;
+    if (Z3_solver_check(ctx, s) == Z3_L_TRUE) {
+        m = Z3_solver_get_model(ctx, s);
+        if (m) Z3_model_inc_ref(ctx, m);  
+        
+        if (Z3_model_eval(ctx, m, somma, 1, &v)) {
+            printf("\nMODEL:\nnum_FP -> %s", Z3_ast_to_string(ctx, v));
+            printf("\n");
+        }
+        else {
+            exitf("failed to evaluate");
+        }
+    }
+    else {
+        exitf("the constraints are satisfiable");
+    }
+    */
+
+    del_solver(ctx, s);
     Z3_del_context(ctx);
 
 }
