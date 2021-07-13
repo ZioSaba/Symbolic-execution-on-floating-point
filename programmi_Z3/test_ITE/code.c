@@ -721,18 +721,20 @@ void ite_example()
     Z3_context ctx = mk_context();
     Z3_solver s = mk_solver(ctx);
 
+    /*
     Z3_ast unordered = mk_int(ctx, 2);
     Z3_ast maggiore = mk_int(ctx, 1);
     Z3_ast uguale = mk_int(ctx, 0);
     Z3_ast minore = mk_int(ctx, -1);
     
-    /*
+    
     Z3_sort bv_sort = Z3_mk_bv_sort(ctx, 32);
     Z3_ast unordered = Z3_mk_numeral(ctx, "2", bv_sort);
     Z3_ast maggiore = Z3_mk_numeral(ctx, "1", bv_sort);
     Z3_ast uguale = Z3_mk_numeral(ctx, "0", bv_sort);
     Z3_ast minore = Z3_mk_numeral(ctx, "-1", bv_sort);
     */
+    
     
 
     Z3_sort rounding_mode = Z3_mk_fpa_rounding_mode_sort(ctx);
@@ -741,6 +743,13 @@ void ite_example()
 
     Z3_sort FP_sort = Z3_mk_fpa_sort_32(ctx);
     Z3_ast zero = Z3_mk_fpa_numeral_float(ctx, 0.0, FP_sort);
+
+    
+    Z3_ast unordered = Z3_mk_fpa_numeral_float(ctx, 2.0, FP_sort);
+    Z3_ast maggiore = Z3_mk_fpa_numeral_float(ctx, 1.0, FP_sort);
+    Z3_ast uguale = Z3_mk_fpa_numeral_float(ctx, 0.0, FP_sort);
+    Z3_ast minore = Z3_mk_fpa_numeral_float(ctx, -1.0, FP_sort);
+    
 
     Z3_symbol x_sym = Z3_mk_string_symbol(ctx, "x");
     Z3_ast x = Z3_mk_const(ctx, x_sym, FP_sort);
@@ -760,7 +769,7 @@ void ite_example()
     Z3_ast livello_1 = Z3_mk_ite(ctx, Z3_mk_fpa_geq(ctx, x, y), livello_2, livello_3);
     printf("%s\n", Z3_ast_to_string(ctx, livello_1));
 
-    Z3_ast expr = Z3_mk_le(ctx, livello_1, uguale);
+    Z3_ast expr = Z3_mk_fpa_leq(ctx, livello_1, uguale);
     Z3_solver_assert(ctx, s, expr);
     printf("Dopo l'inserimento della condizione sulla ITE, i constraint sono: "); controllo(ctx, s);
 
@@ -778,6 +787,9 @@ void ite_example()
     if (Z3_model_eval(ctx, m, eq, 1, &v)) {
         printf("result = ");
         printf("%s\n", Z3_ast_to_string(ctx, v));
+        Z3_ast_vector v = Z3_solver_get_assertions(ctx, s);
+        Z3_ast prova = Z3_ast_vector_get(ctx, v, 2);
+        printf("%s\n", Z3_ast_to_string(ctx, prova));       
     }
     else
         printf("eval fallita\n");
