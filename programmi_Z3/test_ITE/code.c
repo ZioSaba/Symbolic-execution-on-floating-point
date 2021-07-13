@@ -725,6 +725,15 @@ void ite_example()
     Z3_ast maggiore = mk_int(ctx, 1);
     Z3_ast uguale = mk_int(ctx, 0);
     Z3_ast minore = mk_int(ctx, -1);
+    
+    /*
+    Z3_sort bv_sort = Z3_mk_bv_sort(ctx, 32);
+    Z3_ast unordered = Z3_mk_numeral(ctx, "2", bv_sort);
+    Z3_ast maggiore = Z3_mk_numeral(ctx, "1", bv_sort);
+    Z3_ast uguale = Z3_mk_numeral(ctx, "0", bv_sort);
+    Z3_ast minore = Z3_mk_numeral(ctx, "-1", bv_sort);
+    */
+    
 
     Z3_sort rounding_mode = Z3_mk_fpa_rounding_mode_sort(ctx);
     Z3_symbol rm_sym = Z3_mk_string_symbol(ctx, "rm");
