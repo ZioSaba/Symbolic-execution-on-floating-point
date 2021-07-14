@@ -696,38 +696,12 @@ void controllo(Z3_context ctx, Z3_solver s){
 void ite_example()
 {
 
-/*
-    Z3_context ctx;
-    Z3_ast f, one, zero, ite;
-
-    printf("\nite_example\n");
-
-    ctx = mk_context();
-
-    f    = Z3_mk_false(ctx);
-    one  = mk_int(ctx, 1);
-    zero = mk_int(ctx, 0);
-    ite  = Z3_mk_ite(ctx, f, one, zero);
-
-    printf("term: %s\n", Z3_ast_to_string(ctx, ite));
-
-    // delete logical context 
-    Z3_del_context(ctx);
-
-*/
-
     printf("Z3 ITE\n");
 
     Z3_context ctx = mk_context();
     Z3_solver s = mk_solver(ctx);
-
-    /*
-    Z3_ast unordered = mk_int(ctx, 2);
-    Z3_ast maggiore = mk_int(ctx, 1);
-    Z3_ast uguale = mk_int(ctx, 0);
-    Z3_ast minore = mk_int(ctx, -1);
-    */
     
+
     Z3_sort bv_sort = Z3_mk_bv_sort(ctx, 32);
     Z3_ast unordered = Z3_mk_numeral(ctx, "2", bv_sort);
     Z3_ast maggiore = Z3_mk_numeral(ctx, "1", bv_sort);
@@ -735,8 +709,6 @@ void ite_example()
     Z3_ast minore = Z3_mk_numeral(ctx, "-1", bv_sort);
     
     
-    
-
     Z3_sort rounding_mode = Z3_mk_fpa_rounding_mode_sort(ctx);
     Z3_symbol rm_sym = Z3_mk_string_symbol(ctx, "rm");
     Z3_ast rm = Z3_mk_const(ctx, rm_sym, rounding_mode);
@@ -744,40 +716,97 @@ void ite_example()
     Z3_sort FP_sort = Z3_mk_fpa_sort_32(ctx);
     Z3_ast zero = Z3_mk_fpa_numeral_float(ctx, 0.0, FP_sort);
 
-    /*
-    Z3_ast unordered = Z3_mk_fpa_numeral_float(ctx, 2.0, FP_sort);
-    Z3_ast maggiore = Z3_mk_fpa_numeral_float(ctx, 1.0, FP_sort);
-    Z3_ast uguale = Z3_mk_fpa_numeral_float(ctx, 0.0, FP_sort);
-    Z3_ast minore = Z3_mk_fpa_numeral_float(ctx, -1.0, FP_sort);
-    */
-
     Z3_symbol x_sym = Z3_mk_string_symbol(ctx, "x");
     Z3_ast x = Z3_mk_const(ctx, x_sym, FP_sort);
-    Z3_ast c1 = Z3_mk_fpa_eq(ctx, x, zero);
-    Z3_solver_assert(ctx, s, c1);
-    printf("Dopo l'inserimento della condizione 'x == 0', i constraint sono: "); controllo(ctx, s);
 
     Z3_symbol y_sym = Z3_mk_string_symbol(ctx, "y");
     Z3_ast y = Z3_mk_const(ctx, y_sym, FP_sort);
-    Z3_ast c2 = Z3_mk_fpa_gt(ctx, y, x);
-    Z3_solver_assert(ctx, s, c2);
-    printf("Dopo l'inserimento della condizione 'y > x', i constraint sono: "); controllo(ctx, s);
+
+    Z3_ast c1;
+    Z3_ast c2;
+    Z3_ast NaN = Z3_mk_fpa_nan(ctx, FP_sort);
+    Z3_ast livello_1, livello_2, livello_3;
+
+    
 
 
-    Z3_ast livello_3 = Z3_mk_ite(ctx, Z3_mk_fpa_lt(ctx, x, y), minore, unordered);
-    Z3_ast livello_2 = Z3_mk_ite(ctx, Z3_mk_fpa_gt(ctx, x, y), maggiore, uguale);
-    Z3_ast livello_1 = Z3_mk_ite(ctx, Z3_mk_fpa_geq(ctx, x, y), livello_2, livello_3);
+    printf("1) test maggiore\n");
+    printf("2) test uguale\n");
+    printf("3) test minore\n");
+    printf("4) test unordered\n");
+    printf("Scegli il test: ");
+    int num; scanf("%d", &num);
+
+
+    switch (num)
+    {
+    case 1:
+        
+        c1 = Z3_mk_fpa_eq(ctx, y, zero);
+        Z3_solver_assert(ctx, s, c1);
+        printf("Dopo l'inserimento della condizione 'y == 0', i constraint sono: "); controllo(ctx, s);
+
+        c2 = Z3_mk_fpa_gt(ctx, x, y);
+        Z3_solver_assert(ctx, s, c2);
+        printf("Dopo l'inserimento della condizione 'x > y', i constraint sono: "); controllo(ctx, s);
+
+        break;
+    
+    case 2:
+        
+        c1 = Z3_mk_fpa_eq(ctx, x, zero);
+        Z3_solver_assert(ctx, s, c1);
+        printf("Dopo l'inserimento della condizione 'x == 0', i constraint sono: "); controllo(ctx, s);
+
+        c2 = Z3_mk_fpa_eq(ctx, y, x);
+        Z3_solver_assert(ctx, s, c2);
+        printf("Dopo l'inserimento della condizione 'y == x', i constraint sono: "); controllo(ctx, s);
+
+        break;
+
+    case 3:
+        
+        c1 = Z3_mk_fpa_eq(ctx, x, zero);
+        Z3_solver_assert(ctx, s, c1);
+        printf("Dopo l'inserimento della condizione 'x == 0', i constraint sono: "); controllo(ctx, s);
+
+        c2 = Z3_mk_fpa_gt(ctx, y, x);
+        Z3_solver_assert(ctx, s, c2);
+        printf("Dopo l'inserimento della condizione 'y > x', i constraint sono: "); controllo(ctx, s);
+
+        break;
+
+    case 4:
+
+        livello_3 = Z3_mk_ite(ctx, Z3_mk_fpa_lt(ctx, NaN, NaN), minore, unordered);
+        livello_2 = Z3_mk_ite(ctx, Z3_mk_fpa_gt(ctx, NaN, NaN), maggiore, uguale);
+        livello_1 = Z3_mk_ite(ctx, Z3_mk_fpa_geq(ctx, NaN, NaN), livello_2, livello_3);
+        goto assert;
+
+    default:
+        printf("Errore\n");
+        exit(-1);
+    }
+
+
+
+    livello_3 = Z3_mk_ite(ctx, Z3_mk_fpa_lt(ctx, x, y), minore, unordered);
+    livello_2 = Z3_mk_ite(ctx, Z3_mk_fpa_gt(ctx, x, y), maggiore, uguale);
+    livello_1 = Z3_mk_ite(ctx, Z3_mk_fpa_geq(ctx, x, y), livello_2, livello_3);
     printf("%s\n", Z3_ast_to_string(ctx, livello_1));
 
-    //Z3_ast expr = Z3_mk_fpa_leq(ctx, livello_1, uguale);
-    Z3_ast expr = Z3_mk_bvsle(ctx, livello_1, uguale);
-    Z3_solver_assert(ctx, s, expr);
-    printf("Dopo l'inserimento della condizione sulla ITE, i constraint sono: "); controllo(ctx, s);
+assert:
 
-    Z3_symbol somma_sym = Z3_mk_string_symbol(ctx, "x_plus_y");
-    Z3_ast x_plus_y = Z3_mk_const(ctx, somma_sym, FP_sort);
-    Z3_ast eq = Z3_mk_fpa_add(ctx, rm, x, y);
-
+    if (num == 2 || num == 3){
+        Z3_ast expr = Z3_mk_bvsle(ctx, livello_1, uguale);
+        Z3_solver_assert(ctx, s, expr);
+        printf("Dopo l'inserimento della condizione sulla ITE, i constraint sono: "); controllo(ctx, s);
+    }
+    else{
+        Z3_ast expr = Z3_mk_bvsge(ctx, livello_1, uguale);
+        Z3_solver_assert(ctx, s, expr);
+        printf("Dopo l'inserimento della condizione sulla ITE, i constraint sono: "); controllo(ctx, s);
+    }
 
     Z3_ast v;
     Z3_model m = Z3_mk_model(ctx);
@@ -785,13 +814,10 @@ void ite_example()
     if (m) Z3_model_inc_ref(ctx, m);
     printf("MODEL:\n%s", Z3_model_to_string(ctx, m));
 
-    if (Z3_model_eval(ctx, m, eq, 1, &v)) {
-        printf("result = ");
-        printf("%s\n", Z3_ast_to_string(ctx, v));
-        int64_t value;
+    if (Z3_model_eval(ctx, m, livello_1, 1, &v)) {
+        long long value;
         Z3_get_numeral_int64(ctx, v, &value);
-        printf("ITE:"); 
-        printf("%" PRId64 "\n", value);
+        printf("ITE: %llx\n", value);
     }
     else
         printf("eval fallita\n");
@@ -799,6 +825,7 @@ void ite_example()
     if (m) Z3_model_dec_ref(ctx, m);
     del_solver(ctx, s);
     Z3_del_context(ctx);
+
 }
 
 
