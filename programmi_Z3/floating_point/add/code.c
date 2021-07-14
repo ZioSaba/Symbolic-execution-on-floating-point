@@ -759,34 +759,6 @@ void eval()
         if (Z3_model_eval(ctx, m, eq, 1, &v)) {
             printf("result = ");
             printf("%s\n", Z3_ast_to_string(ctx, v));
-
-            /*
-            int segno_2;
-            bool segno = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_sign_bv(ctx, v), &segno_2);
-            printf("\n segno = %d\n", segno_2);
-
-            printf("\n esponente: %s", Z3_fpa_get_numeral_exponent_string(ctx, v, 1));
-
-            int esp_2;
-            bool esp = Z3_get_numeral_int(ctx, Z3_fpa_get_numeral_exponent_bv(ctx, v, 1), &esp_2);
-            esp_2 = esp_2 - 1023;
-            printf("\n esp_2 = %d\n", esp_2);
-        
-            printf("\n mantissa: %s", Z3_fpa_get_numeral_significand_string(ctx, v));
-            printf("\n");
-            uint64_t* mantissa = malloc(sizeof(uint64_t));
-            bool prova = Z3_fpa_get_numeral_significand_uint64(ctx, v, mantissa);
-            printf("%" PRIu64 "\n", *mantissa);
-            
-
-            long double res = pow(-1, segno_2) * pow(2, esp_2) * 1.0000019073486325904553950749686919152736663818359375;
-            printf("\n Numero totale: %Le", res);
-
-            free(mantissa);
-
-            */
-
-            printf("\n");
         }
         else {
             exitf("failed to evaluate: x+y");
