@@ -28,9 +28,6 @@ QSYM
 Riga 25: aggiunta del metodo per la costruzione dell'espressione della Addss nella classe ExprBuilder     (risolve "no member added in class" per (5) )
 Riga 219: aggiunta del metodo per il collegamento tra il simbolo + e Addss nella classe ConstantFoldingExprBuilder
 Riga 256: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder quando entrambi i parametri sono espressioni simboliche
-Riga 281: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder quando uno dei due parametri è costante e l'altro è una variabile
-Riga 282: aggiunta del metodo per la costruzione dell'espressione simbolica della Addss nella classe SymbolicExprBuilder quando entrambi i parametri sono variabili
-
 
 7) expr.h
 Riga 81: aggiunta del nuovo tipo di operazione Addss in Kind
@@ -42,6 +39,4 @@ Riga 45: aggiunta della nuova funzione Addss in createBinaryExpr
 
 
 9)expr_builder.cpp
-Riga 702: definizione del corpo del metodo aggiunto a riga 256 di expr_builder.h
-Riga 707: definizione del corpo del metodo aggiunto a riga 281 di expr_builder.h
-Riga 712: definizione del corpo del metodo aggiunto a riga 282 di expr_builder.h
+Riga 702: definizione del corpo del metodo aggiunto a riga 259 di expr_builder.h
