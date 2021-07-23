@@ -1,16 +1,8 @@
-Per implementare l'helper simbolico di comiss devi costruire un espressione che modella questi scenari e scriverla in CC_SRC che poi dovrebbe essere utilizzato quando si valuta il salto condizionato.
+Prova a vedere come il runtime simple (altra alternativa vedere il codice di KLEE che ti avevo linkato). 
+Fai delle prove solo con Z3, usando i tipi Z3 che usa SymCC/SymQEMU e vedi se funziona.
 
-Per creare la formula che descrive i vari scenari, devi usare una formula IfThenElse (ITE) che ha una semantica del tipo: ITE(cond, A, B)
 
- - se cond è vera, allora l'espressione vale A
- - altrimenti B. 
- 
-A e B devono essere oggetti tra loro "consistenti" (stesso numero di bit e credo stesso tipo Z3). 
-Se hai più casi da gestire, devi procedere ricorsivamente (es. B può essere a sua volta una ITE).
-QSYM ha già nella sua gerarchie un'espressione (IteExpr) che modella le ITE Z3, probabilmente dovrai "esportarla" a SymCC/SymQEMU definendo es. _sym_build_ite().
 
-Ti consiglio di fare delle prove con Z3 andando a creare delle ITE che coinvolgono i tipi Z3 che stai usando tu per i float. Se tutto funziona, allora provi ad implementarlo in SymCC/SymQEMU.
-
-Infine, per scrivere il risultato su CC_SRC che corrisponde al registro TCG cc_src, probabilmente dovrai in realtà recuperare un riferimento a cc_src_expr e sovrascrivere quest'ultimo. 
-Un'altra strada, rispetto a recuperare il riferimento, potrebbe essere avere un _sym_helper_comiss che ha un output e che questo output è cc_src_expr. 
-Direi che questa è una cosa da decidere dopo che hai risolto la costruzione dell'espressione ITE.
+ Il risultato di float64_compare_quiet() non viene direttamente scritto in CC_SRC. Tu non puoi fare l'accesso in comis_eflags come fa lui, ma devir ragionare sui vari casi: se float64_compare_quiet ritorna X, che risultato Y avrai?
+Per farlo dovrai fare una ITE. Come ti aveva detto secondo me ha senso unire/fondere la ITE generata da float64_compare_quiet e questa generata qui. 
+OK (?)
