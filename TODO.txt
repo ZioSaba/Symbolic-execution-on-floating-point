@@ -1,8 +1,1 @@
-Prova a vedere come il runtime simple (altra alternativa vedere il codice di KLEE che ti avevo linkato). 
-Fai delle prove solo con Z3, usando i tipi Z3 che usa SymCC/SymQEMU e vedi se funziona.
-
-
-
- Il risultato di float64_compare_quiet() non viene direttamente scritto in CC_SRC. Tu non puoi fare l'accesso in comis_eflags come fa lui, ma devir ragionare sui vari casi: se float64_compare_quiet ritorna X, che risultato Y avrai?
-Per farlo dovrai fare una ITE. Come ti aveva detto secondo me ha senso unire/fondere la ITE generata da float64_compare_quiet e questa generata qui. 
-OK (?)
+FARLO FUNZIONARE DEFINITIVAMENTE
