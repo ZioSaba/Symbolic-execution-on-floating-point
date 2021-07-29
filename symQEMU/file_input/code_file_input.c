@@ -16,6 +16,7 @@ float foo (int a){
 int main (){
 
     int desc = open("/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/input/input.dat", O_RDONLY);
+    //int desc = open("/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/risultati/000000", O_RDONLY);
     if (desc == -1){
         //printf("Errore nell'apertura del file...\n");
         return -1;
@@ -29,7 +30,6 @@ int main (){
         return -1;
     }
 
-    //int a = atoi(buf);
     //printf("buf=%d\n", buf);
     printf("%f\n", foo(buf));
 
