@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export SYMCC_OUTPUT_DIR=/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/risultati/
+export SYMCC_OUTPUT_DIR=/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/risultati
 
 export SYMCC_INPUT_FILE=/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/input/input.dat
 
