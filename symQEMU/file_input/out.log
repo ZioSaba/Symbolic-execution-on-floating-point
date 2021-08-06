@@ -1,5 +1,5 @@
 This is SymCC running with the QSYM backend
 Making data read from /home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/input/input.dat as symbolic
-[STAT] SMT: { "solving_time": 0, "total_time": 69164 }
-[STAT] SMT: { "solving_time": 53514 }
-[INFO] New testcase: /home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/risultati//000000
+[STAT] SMT: { "solving_time": 0, "total_time": 60002 }
+[STAT] SMT: { "solving_time": 38809 }
+[INFO] New testcase: /home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/risultati/000000

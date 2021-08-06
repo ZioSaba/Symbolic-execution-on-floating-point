@@ -2,4 +2,4 @@
 
 make 
 
-./script.sh #2>out.log
+./script.sh 2>out.log
