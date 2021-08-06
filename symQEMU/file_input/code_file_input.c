@@ -40,10 +40,9 @@ float foo_divisione (int a){
         return -1.0;
 }
 
-int main (){
+int main (int argc, char *argv[]){
 
-    //int desc = open("/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/input/input.dat", O_RDONLY);
-    int desc = open("/home/zio-saba/Scrivania/progetto_laurea/symQEMU/file_input/risultati/000000", O_RDONLY);
+    int desc = open(argv[1], O_RDONLY);
     if (desc == -1){
         //printf("Errore nell'apertura del file...\n");
         return -1;
