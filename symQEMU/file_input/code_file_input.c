@@ -5,9 +5,9 @@
 #include <arpa/inet.h>
 
 float foo_addizione (int a){
-    float x = 15.5;
+    float x = 13.89;
     float res = x + a;
-    if (res < 20.0)
+    if (res < 123.45f)
         return 1.0;
     else 
         return -1.0;
@@ -23,18 +23,18 @@ float foo_sottrazione (int a){
 }
 
 float foo_moltiplicazione (int a){
-    float x = 15.5;
+    float x = 48.1475;
     float res = x * a;
-    if (res < 20.0)
+    if (res < 503.2485f)
         return 1.0;
     else 
         return -1.0;
 }
 
 float foo_divisione (int a){
-    float x = 15.5;
+    float x = 456.789;
     float res = x / a;
-    if (res < 20.0)
+    if (res < 1.23f)
         return 1.0;
     else 
         return -1.0;
@@ -58,7 +58,7 @@ int main (int argc, char* argv[]){
     }
 
     //printf("buf=%d\n", buf);
-    printf("%f\n", foo_addizione(buf));
+    printf("%f\n", foo_divisione(buf));
 
     if (close(desc) == -1){
         //printf("Errore nella chiusura del file...\n");
