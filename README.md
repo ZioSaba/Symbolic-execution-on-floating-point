@@ -15,26 +15,3 @@ Una limitazione comune a diversi esecutori concolici esistenti è il mancato sup
 ## Prerequisiti
 * Versione modificata di SymCC, disponibile al seguente indirizzo: "https://github.com/ZioSaba/symcc"
 * Versione modificata di SymQEMU, disponibile al seguente indirizzo: "https://github.com/ZioSaba/symqemu"
-
-Il simbolo "**" scrive in grassetto
-**Sono in grassetto**
-
-Il simbolo "##" crea un titolo piccolo con divisorio
-## Sono un titolo piccolo
-
-Il simbolo "*" crea un elemento di una lista
-* Elem_1
-* Elem_2
-
-Il simbolo "_" scrive in corsivo
-_Sono in corsivo_
-
-## Funzionamento
-
-Il simbolo "```sh" consente di scrivere testo di shell
-```sh
-$make 
-```
-
-Il simbolo "###" crea un titolo piccolo senza divisorio
-### Sono un titolo piccolissimo
